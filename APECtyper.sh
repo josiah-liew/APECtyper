@@ -17,6 +17,8 @@ VERSION="APECtyper v.1.0 (Apr. 2022)"
 
 
 DIR=$( dirname "${BASH_SOURCE[0]}" )
+echo $DIR
+
 
 DATE=$(date +%Y-%m-%d)
 
@@ -42,6 +44,7 @@ function checkDependencies () {
     then
         printf "ERROR: $1 could not be found." 
         exit 1
+    fi
 }
 
 function mlstAnalysis () {
