@@ -1,2 +1,5 @@
 # ignore ALL files in test_seqs directory
 test_seqs/
+
+# ignore all files in db directory that have pattern apec_refs.fa.*
+db/apec_refs.fa.*
