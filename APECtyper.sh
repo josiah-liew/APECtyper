@@ -37,7 +37,7 @@ function help () {
 	printf "\t-v\t\tprint the version\n"
 	printf "\t-i\t\tFASTA contigs file or directory containing multiple FASTA files\n"
 	printf "\t-o\t\toutput directory\n"
-	printf "\t-r\t\tprint citation\n"
+	printf "\t-c\t\tprint citation\n"
 	exit 0
 }
 
@@ -88,6 +88,9 @@ while getopts 'vhi:o:c' flag; do
   esac
 done
 
+#### Check for empty input variables ####
+[[ -z "$INPUT" ]] && { echo "Missing a contig file or directory." ; exit 1; }
+[[ -z "$OUTPUT" ]] && { echo "Missing a specified output directory." ; exit 1; }
 
 #### Check that input file/directory exists ####
 if [ ! -f $INPUT ] && [ ! -d $INPUT ]
@@ -138,7 +141,7 @@ done
  
     
 #### Remove temp files ####
-rm ${OUTDIR}/contigFiles.tmp
+rm -f ${OUTDIR}/contigFiles.tmp
 
 echo "============== End =================="
 exit 0
