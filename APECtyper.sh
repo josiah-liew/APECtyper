@@ -75,7 +75,7 @@ while getopts 'vhi:o:c' flag; do
        exit 0 ;;
     h) printHelp
        exit 0 ;;
-    i) INPUT=$OPTARG ;;
+    i) INPUT="$OPTARG" ;;
     o) OUTDIR=$OPTARG ;;
     c) echo -e "\n$CITATION\n"
        exit 0 ;;
