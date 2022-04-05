@@ -25,13 +25,13 @@ PERC_IDENTITY=90
 PERC_COVERAGE=90
 
 OUTDIR=''    # name of output directory
-INPUT=''     # name of input FASTA file or directory
+INPUT=''     # name of input FASTA file(s)
 
 function printHelp () {
-	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA or DIR] -o [DIR]\n"
+	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA] -o [DIR]\n"
 	printf "\t-h\t\tprint this message\n"
 	printf "\t-v\t\tprint the version\n"
-	printf "\t-i\t\tFASTA contigs file or directory containing multiple FASTA files\n"
+	printf "\t-i\t\tFASTA contig file(s)\n"
 	printf "\t-o\t\toutput directory\n"
 	printf "\t-c\t\tprint citation\n"
 }
@@ -47,7 +47,7 @@ function checkDependencies () {
 function mlstAnalysis () {
     echo "======== Running mlst ========"
     mkdir ${OUTDIR}/mlst
-    mlst --scheme ecoli --csv $FASTA  > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
+    mlst --scheme ecoli --csv $FASTA > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
 }
 
 function makeBlastDB () {
@@ -83,11 +83,11 @@ done
 [[ $# == 0 ]] && { printHelp ; exit 1; }
 
 #### Check for empty input variables ####
-[[ -z "$INPUT" ]] && { echo "Error: Missing a contig file or directory." ; printHelp ; exit 1; }
+[[ -z "$INPUT" ]] && { echo "Error: Missing input contig file(s)." ; printHelp ; exit 1; }
 [[ -z "$OUTDIR" ]] && { echo "Error: Missing a specified output directory." ; printHelp ; exit 1; }
 
-#### Check that input file/directory exists ####
-[[ ! -f "$INPUT" ]] && [[ ! -d "$INPUT" ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
+#### Check that input file exists ####
+[[ ! -f "$INPUT" ]] && { echo "Error: Input file(s) does not exist." ; exit 1; }
 
 #### Check for dependencies ####
 checkDependencies mlst
@@ -96,23 +96,18 @@ checkDependencies blastn
 #### Check that output directory exists, create if does not exist ####
 [[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
 
-if [ ! -d $OUTDIR ]; then
-    mkdir $OUTDIR
-    printf "\nOutput directory: %s" $OUTDIR
-    else
-    printf "\nOutput directory: %s" $OUTDIR
-fi
-
 #### Generate list of input FASTA files ####
-if [[ -f $INPUT ]]; then
-    echo $INPUT > ${OUTDIR}/contigFiles.tmp
-elif [[ -d $INPUT ]]; then
+if [[ $INPUT =~ .*\*.* ]]; then
     ls -1 $INPUT > ${OUTDIR}/contigFiles.tmp
+else
+    echo $INPUT > ${OUTDIR}/contigFiles.tmp
 fi
 
 #### MLST and BLAST of each input fasta file ####
 for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
-    NAME=${FASTA%.*}
+    
+    FILE=${FASTA##*/}
+    NAME=${FILE%.*}
     
     echo "============== Analysis of ${NAME} =================="
     
