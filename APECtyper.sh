@@ -48,7 +48,6 @@ function checkDependencies () {
 
 function mlstAnalysis () {
     echo "======== Running mlst ========"
-    mkdir ${OUTDIR}/mlst
     mlst --scheme ecoli --csv $FASTA --label $NAME > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
 }
 
@@ -60,7 +59,6 @@ function makeBlastDB () {
 
 function blastAnalysis () {
     echo "===== Running BLAST ====="
-    mkdir ${OUTDIR}/blast
     blastn -query $FASTA -db $DIR/db/apec_refs.fa -perc_identity $PERC_IDENTITY -outfmt "6 qseqid sseqid pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
 }
 
@@ -104,6 +102,10 @@ checkDependencies blastn
 
 #### Check that output directory exists, create if does not exist ####
 [[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
+
+#### Create mlst and BLAST output directories ####
+mkdir ${OUTDIR}/mlst
+mkdir ${OUTDIR}/blast
 
 #### Generate list of input FASTA files ####
 if [[ -f "$INPUT" ]]; then
