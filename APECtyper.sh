@@ -25,29 +25,31 @@ PERC_IDENTITY=90
 PERC_COVERAGE=90
 
 OUTDIR=''    # name of output directory
-INPUT=''     # name of input FASTA file or directory
+INPUT=''     # name of input FASTA file(s)
 
 function printHelp () {
-	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA or DIR] -o [DIR]\n"
+	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA] -o [DIR]\n"
 	printf "\t-h\t\tprint this message\n"
 	printf "\t-v\t\tprint the version\n"
-	printf "\t-i\t\tFASTA contigs file or directory containing multiple FASTA files\n"
+	printf "\t-i\t\tFASTA contig file(s)\n"
 	printf "\t-o\t\toutput directory\n"
 	printf "\t-c\t\tprint citation\n"
 }
 
 function checkDependencies () {
-    if ! command -v $1
+    if ! command -v $1 >/dev/null 2>&1
     then
         printf "Error: dependency $1 could not be found.\n" 
         exit 1
+    else
+        printf "Found: $1 \n"
     fi
 }
 
 function mlstAnalysis () {
     echo "======== Running mlst ========"
     mkdir ${OUTDIR}/mlst
-    mlst --scheme ecoli --csv $FASTA  > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
+    mlst --scheme ecoli --csv $FASTA --label $NAME > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
 }
 
 function makeBlastDB () {
@@ -58,6 +60,7 @@ function makeBlastDB () {
 
 function blastAnalysis () {
     echo "===== Running BLAST ====="
+    mkdir ${OUTDIR}/blast
     blastn -query $FASTA -db $DIR/db/apec_refs.fa -perc_identity $PERC_IDENTITY -outfmt "6 qseqid sseqid pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
 }
 
@@ -72,7 +75,7 @@ while getopts 'vhi:o:c' flag; do
        exit 0 ;;
     h) printHelp
        exit 0 ;;
-    i) INPUT=$OPTARG ;;
+    i) INPUT="$OPTARG" ;;
     o) OUTDIR=$OPTARG ;;
     c) echo -e "\n$CITATION\n"
        exit 0 ;;
@@ -82,12 +85,19 @@ done
 #### If no variables, print help ####
 [[ $# == 0 ]] && { printHelp ; exit 1; }
 
+echo "print input"
+echo "$INPUT"
+ls "$INPUT"
+
+echo "print output"
+echo "$OUTDIR"
+
 #### Check for empty input variables ####
-[[ -z "$INPUT" ]] && { echo "Error: Missing a contig file or directory." ; printHelp ; exit 1; }
+[[ -z "$INPUT" ]] && { echo "Error: Missing input contig file(s)." ; printHelp ; exit 1; }
 [[ -z "$OUTDIR" ]] && { echo "Error: Missing a specified output directory." ; printHelp ; exit 1; }
 
-#### Check that input file/directory exists ####
-[[ ! -f "$INPUT" ]] && [[ ! -d "$INPUT" ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
+#### Check that input file exists ####
+[[ ! -f "$INPUT" ]] && { echo "Error: Input file(s) does not exist." ; exit 1; }
 
 #### Check for dependencies ####
 checkDependencies mlst
@@ -96,33 +106,34 @@ checkDependencies blastn
 #### Check that output directory exists, create if does not exist ####
 [[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
 
-if [ ! -d $OUTDIR ]; then
-    mkdir $OUTDIR
-    printf "\nOutput directory: %s" $OUTDIR
-    else
-    printf "\nOutput directory: %s" $OUTDIR
-fi
-
 #### Generate list of input FASTA files ####
-if [[ -f $INPUT ]]; then
-    echo $INPUT > ${OUTDIR}/contigFiles.tmp
-elif [[ -d $INPUT ]]; then
+if [[ $INPUT =~ .*\*.* ]]; then
     ls -1 $INPUT > ${OUTDIR}/contigFiles.tmp
+else
+    echo $INPUT > ${OUTDIR}/contigFiles.tmp
 fi
 
 #### MLST and BLAST of each input fasta file ####
 for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
-    NAME=${FASTA%.*}
+    
+    FILE=${FASTA##*/}
+    NAME=${FILE%.*}
+    
+    echo $FASTA
+    echo $FILE
+    echo $NAME
     
     echo "============== Analysis of ${NAME} =================="
     
     ##### Step 1: MLST #####
     mlstAnalysis
-    [[ $? -eq 0 ]] && { echo "Error when running mlst." ; rm -rf ${OUTDIR} ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when running mlst." ; rm -rf ${OUTDIR} ; exit 1; }
     
     ##### Step 2: BLAST ##### 
     blastAnalysis
-    [[ $? -eq 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR} ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR} ; exit 1; }
 
     echo "============== Analysis of ${NAME} Complete ==================" 
 done
