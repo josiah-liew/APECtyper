@@ -46,6 +46,7 @@ function checkDependencies () {
 
 function mlstAnalysis () {
     echo "======== Running mlst ========"
+    mkdir ${OUTDIR}/mlst
     mlst --scheme ecoli --csv $FASTA  > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
 }
 
