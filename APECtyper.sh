@@ -106,10 +106,10 @@ checkDependencies blastn
 [[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
 
 #### Generate list of input FASTA files ####
-if [[ -f $INPUT ]]; then
-     echo $INPUT > ${OUTDIR}/contigFiles.tmp
-elif [[ -d $INPUT ]]; then
-     ls -1 $INPUT > ${OUTDIR}/contigFiles.tmp
+if [[ -f "$INPUT" ]]; then
+    echo "$INPUT" > ${OUTDIR}/contigFiles.tmp
+elif [[ -d "$INPUT" ]]; then
+    find "$INPUT" -maxdepth 1 -type f > ${OUTDIR}/contigFiles.tmp
 fi
 
 #### MLST and BLAST of each input fasta file ####
