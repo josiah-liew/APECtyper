@@ -95,8 +95,8 @@ echo "$OUTDIR"
 [[ -z "$INPUT" ]] && { echo "Error: Missing an input contig file or directory." ; printHelp ; exit 1; }
 [[ -z "$OUTDIR" ]] && { echo "Error: Missing a specified output directory." ; printHelp ; exit 1; }
 
-#### Check that input file exists ####
-[[ ! -f "$INPUT" ]] && { echo "Error: Input file(s) does not exist." ; exit 1; }
+#### Check that input file/directory exists ####
+[[ ! -f "$INPUT" ]] && [[ ! -d "$INPUT" ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
 
 #### Check for dependencies ####
 checkDependencies mlst
@@ -110,6 +110,7 @@ if [[ -f $INPUT ]]; then
      echo $INPUT > ${OUTDIR}/contigFiles.tmp
 elif [[ -d $INPUT ]]; then
      ls -1 $INPUT > ${OUTDIR}/contigFiles.tmp
+fi
 
 #### MLST and BLAST of each input fasta file ####
 for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
