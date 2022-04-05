@@ -24,8 +24,8 @@ DB_APEC="${DIR}/db/apec_refs.fa"
 PERC_IDENTITY=90
 PERC_COVERAGE=90
 
-OUTDIR=""    # name of output directory
-INPUT=""     # name of input FASTA file or directory
+OUTDIR=''    # name of output directory
+INPUT=''     # name of input FASTA file or directory
 
 function printHelp () {
 	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA or DIR] -o [DIR]\n"
@@ -34,13 +34,12 @@ function printHelp () {
 	printf "\t-i\t\tFASTA contigs file or directory containing multiple FASTA files\n"
 	printf "\t-o\t\toutput directory\n"
 	printf "\t-c\t\tprint citation\n"
-	exit 0
 }
 
 function checkDependencies () {
     if ! command -v $1
     then
-        printf "Error: $1 could not be found.\n" 
+        printf "Error: dependency $1 could not be found.\n" 
         exit 1
     fi
 }
@@ -74,7 +73,8 @@ while getopts 'vhi:o:c' flag; do
        exit 0 ;;
     i) INPUT=$OPTARG ;;
     o) OUTDIR=$OPTARG ;;
-    c) echo -e "\n$CITATION\n" ;;
+    c) echo -e "\n$CITATION\n"
+       exit 0 ;;
   esac
 done
 
@@ -83,17 +83,24 @@ done
 
 #### Check for empty input variables ####
 [[ -z "$INPUT" ]] && { echo "Error: Missing a contig file or directory." ; printHelp ; exit 1; }
-[[ -z "$OUTPUT" ]] && { echo "Error: Missing a specified output directory." ; printHelp ; exit 1; }
+[[ -z "$OUTDIR" ]] && { echo "Error: Missing a specified output directory." ; printHelp ; exit 1; }
 
 #### Check that input file/directory exists ####
-[[ ! -f $INPUT ]] && [[ ! -d $INPUT ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
+[[ ! -f "$INPUT" ]] && [[ ! -d "$INPUT" ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
 
 #### Check for dependencies ####
 checkDependencies mlst
 checkDependencies blastn
 
 #### Check that output directory exists, create if does not exist ####
-[[ ! -d $OUTDIR ]] && { mkdir $OUTDIR ; }
+[[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
+
+if [ ! -d $OUTDIR ]; then
+    mkdir $OUTDIR
+    printf "\nOutput directory: %s" $OUTDIR
+    else
+    printf "\nOutput directory: %s" $OUTDIR
+fi
 
 #### Generate list of input FASTA files ####
 if [[ -f $INPUT ]]; then
