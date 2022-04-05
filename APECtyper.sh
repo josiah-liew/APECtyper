@@ -37,10 +37,12 @@ function printHelp () {
 }
 
 function checkDependencies () {
-    if ! command -v $1
+    if ! command -v $1 >/dev/null 2>&1
     then
         printf "Error: dependency $1 could not be found.\n" 
         exit 1
+    else
+        printf "Found: $1 \n"
     fi
 }
 
@@ -58,6 +60,7 @@ function makeBlastDB () {
 
 function blastAnalysis () {
     echo "===== Running BLAST ====="
+    mkdir ${OUTDIR}/blast
     blastn -query $FASTA -db $DIR/db/apec_refs.fa -perc_identity $PERC_IDENTITY -outfmt "6 qseqid sseqid pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
 }
 
