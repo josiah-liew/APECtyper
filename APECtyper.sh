@@ -82,6 +82,9 @@ done
 #### If no variables, print help ####
 [[ $# == 0 ]] && { printHelp ; exit 1; }
 
+echo $OUTDIR
+echo $INPUT
+
 #### Check for empty input variables ####
 [[ -z "$INPUT" ]] && { echo "Error: Missing input contig file(s)." ; printHelp ; exit 1; }
 [[ -z "$OUTDIR" ]] && { echo "Error: Missing a specified output directory." ; printHelp ; exit 1; }
@@ -109,15 +112,21 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     FILE=${FASTA##*/}
     NAME=${FILE%.*}
     
+    echo $FASTA
+    echo $FILE
+    echo $NAME
+    
     echo "============== Analysis of ${NAME} =================="
     
     ##### Step 1: MLST #####
     mlstAnalysis
-    [[ $? -eq 0 ]] && { echo "Error when running mlst." ; rm -rf ${OUTDIR} ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when running mlst." ; rm -rf ${OUTDIR} ; exit 1; }
     
     ##### Step 2: BLAST ##### 
     blastAnalysis
-    [[ $? -eq 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR} ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR} ; exit 1; }
 
     echo "============== Analysis of ${NAME} Complete ==================" 
 done
