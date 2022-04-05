@@ -87,6 +87,7 @@ done
 
 echo "print input"
 echo $INPUT
+ls $INPUT
 
 echo "print output"
 echo $OUTDIR
