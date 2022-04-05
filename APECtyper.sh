@@ -24,14 +24,14 @@ DB_APEC="${DIR}/db/apec_refs.fa"
 PERC_IDENTITY=90
 PERC_COVERAGE=90
 
+INPUT=''     # name of input FASTA file or directory
 OUTDIR=''    # name of output directory
-INPUT=''     # name of input FASTA file(s)
 
 function printHelp () {
-	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA] -o [DIR]\n"
+	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA or DIR] -o [DIR]\n"
 	printf "\t-h\t\tprint this message\n"
 	printf "\t-v\t\tprint the version\n"
-	printf "\t-i\t\tFASTA contig file(s)\n"
+	printf "\t-i\t\tFASTA contig file or directory containing multiple FASTA files\n"
 	printf "\t-o\t\toutput directory\n"
 	printf "\t-c\t\tprint citation\n"
 }
@@ -93,11 +93,11 @@ echo "print output"
 echo "$OUTDIR"
 
 #### Check for empty input variables ####
-[[ -z "$INPUT" ]] && { echo "Error: Missing input contig file(s)." ; printHelp ; exit 1; }
+[[ -z "$INPUT" ]] && { echo "Error: Missing an input contig file or directory." ; printHelp ; exit 1; }
 [[ -z "$OUTDIR" ]] && { echo "Error: Missing a specified output directory." ; printHelp ; exit 1; }
 
-#### Check that input file exists ####
-[[ ! -f "$INPUT" ]] && { echo "Error: Input file(s) does not exist." ; exit 1; }
+#### Check that input file/directory exists ####
+[[ ! -f "$INPUT" ]] && [[ ! -d "$INPUT" ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
 
 #### Check for dependencies ####
 checkDependencies mlst
@@ -107,11 +107,10 @@ checkDependencies blastn
 [[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
 
 #### Generate list of input FASTA files ####
-if [[ $INPUT =~ .*\*.* ]]; then
-    ls -1 $INPUT > ${OUTDIR}/contigFiles.tmp
-else
-    echo $INPUT > ${OUTDIR}/contigFiles.tmp
-fi
+if [[ -f $INPUT ]]; then
+     echo $INPUT > ${OUTDIR}/contigFiles.tmp
+elif [[ -d $INPUT ]]; then
+     ls -1 $INPUT > ${OUTDIR}/contigFiles.tmp
 
 #### MLST and BLAST of each input fasta file ####
 for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
