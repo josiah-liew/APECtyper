@@ -86,11 +86,11 @@ done
 [[ $# == 0 ]] && { printHelp ; exit 1; }
 
 echo "print input"
-echo $INPUT
-ls $INPUT
+echo "$INPUT"
+ls "$INPUT"
 
 echo "print output"
-echo $OUTDIR
+echo "$OUTDIR"
 
 #### Check for empty input variables ####
 [[ -z "$INPUT" ]] && { echo "Error: Missing input contig file(s)." ; printHelp ; exit 1; }
