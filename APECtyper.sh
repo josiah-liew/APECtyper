@@ -49,13 +49,12 @@ function mlstAnalysis () {
 function makeBlastDB () {
     echo "======== Making BLAST database ========"
     cp $DIR/db/apec_refs.fa $OUTDIR
-    makeblastdb -in $OUTDIR/apec_refs.fa -dbtype nucl -parse_seqids -title "APEC References"
+    makeblastdb -in $OUTDIR/apec_refs.fa -dbtype nucl -title "APEC Ref Seqs"
 }
 
 function blastAnalysis () {
     echo "===== Running BLAST ====="
     blastn -query $FASTA -db $OUTDIR/apec_refs.fa -outfmt "6 qseqid sseqid pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
-    rm -f $OUTDIR/apec_refs.fa*
 }
 
 function generateReport () {
@@ -113,9 +112,8 @@ checkDependencies blastn
 #---------------------------- Set-up ---------------------------------
 
 # Create mlst and BLAST output directories
-###### NOTE: Currently this will rewrite any other directoris with the same name
-mkdir -f ${OUTDIR}/mlst
-mkdir -f ${OUTDIR}/blast
+mkdir ${OUTDIR}/mlst
+mkdir ${OUTDIR}/blast
 
 # Build temp blast database
 makeBlastDB
@@ -166,7 +164,8 @@ done
 #------------------------- Clean-up -------------------------------    
 
 # Remove temp files
-rm -f ${OUTDIR}/*.tmp
+rm -f $OUTDIR/*.tmp
+rm -f $OUTDIR/apec_refs.fa*
 
 echo "============== End =================="
 exit 0
