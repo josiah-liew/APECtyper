@@ -114,8 +114,8 @@ checkDependencies blastn
 
 # Create mlst and BLAST output directories
 ###### NOTE: Currently this will rewrite any other directoris with the same name
-mkdir -f ${OUTDIR}/mlst
-mkdir -f ${OUTDIR}/blast
+mkdir ${OUTDIR}/mlst
+mkdir ${OUTDIR}/blast
 
 # Build temp blast database
 makeBlastDB
