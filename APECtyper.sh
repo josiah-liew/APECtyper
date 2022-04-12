@@ -54,12 +54,12 @@ function makeBlastDB () {
 
 function blastAnalysis () {
     echo "===== Running BLAST ====="
-    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -outfmt "6 qseqid sseqid pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
+    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -outfmt "6 qseqid sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
 }
 
 function generateReport () {
    echo "===== Generating report ====="
-   echo "This is where we will generate the report using R."
+   Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY"
 }
 
 #------------------------------- Options ---------------------------------
