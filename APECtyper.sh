@@ -4,36 +4,31 @@
 
 # Basic steps: TBD
 
-# Current version: 1.0 (Apr. 2022)
-VERSION="APECtyper v.1.0 (Apr. 2022)"
-
-# Please cite:
-CITATION="TBD"
-
 # Required Software:
 ## NCBI BLAST+ blastn >= 2.9.0 (dependency of mlst)
 ## mlst (incl. dependencies)
 ##
 ##
 
-DIR=$( dirname "${BASH_SOURCE[0]}" )
-DATE=$(date +%Y-%m-%d)
+#---------------------------- Globals --------------------------------
 
-# BLAST parameters
-DB_APEC="${DIR}/db/apec_refs.fa"
-PERC_IDENTITY=90
-PERC_COVERAGE=90
+VERSION="APECtyper v.1.0 (Apr. 2022)"     # current version: 1.0 (Apr. 2022)
+DIR=$( dirname "${BASH_SOURCE[0]}" )      # source directory
+DATE=$( date +%Y-%m-%d )                  # today's date
+CITATION="TBD"                            # APECtyper citation
+DB_APEC="${DIR}/db/apec_refs.fa"          # APEC ref database location
 
-INPUT=''     # name of input FASTA file or directory
-OUTDIR=''    # name of output directory
+#--------------------------- Functions -----------------------------------
 
-function printHelp () {
+function printUsage () {
 	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA] -o [DIR]\n"
-	printf "\t-h\t\tprint this message\n"
+	printf "\t-h\t\tprint this usage message\n"
 	printf "\t-v\t\tprint the version\n"
-	printf "\t-i\t\tFASTA contig file or directory containing multiple FASTA files\n"
+	printf "\t-f\t\tFASTA contig file or directory containing multiple FASTA files\n"
 	printf "\t-o\t\toutput directory\n"
-	printf "\t-c\t\tprint citation\n"
+	printf "\t-i\t\tminimum blast % identity [default: 90]\n"
+	printf "\t-i\t\tminimum blast % coverage [default: 90]\n"
+	printf "\t-r\t\tprint citation\n"
 }
 
 function checkDependencies () {
@@ -53,35 +48,47 @@ function mlstAnalysis () {
 
 function makeBlastDB () {
     echo "======== Making BLAST database ========"
-    rm -f $DIR/db/apec_refs.fa.*
-    makeblastdb -in $DIR/db/apec_refs.fa -dbtype nucl -parse_seqids -title "APEC References"
+    cp $DIR/db/apec_refs.fa $OUTDIR
+    makeblastdb -in $OUTDIR/apec_refs.fa -dbtype nucl -parse_seqids -title "APEC References"
 }
 
 function blastAnalysis () {
     echo "===== Running BLAST ====="
-    blastn -query $FASTA -db $DIR/db/apec_refs.fa -perc_identity $PERC_IDENTITY -outfmt "6 qseqid sseqid pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
+    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -outfmt "6 qseqid sseqid pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
+    rm -f $OUTDIR/apec_refs.fa*
 }
 
 function generateReport () {
-   echo "This is where we will generate the report."
+   echo "===== Generating report ====="
+   echo "This is where we will generate the report using R."
 }
 
-#### Parse command options and arguments ####
-while getopts 'vhi:o:c' flag; do
+#------------------------------- Options ---------------------------------
+
+# Set defaults
+PERC_IDENTITY=90     # default minimum blast % identity
+PERC_COVERAGE=90     # default minimum blast % coverage
+
+# Parse command options and arguments
+while getopts 'vhf:o:i:c:r' flag; do
   case "${flag}" in
     v) echo "$VERSION"
        exit 0 ;;
-    h) printHelp
+    h) printUsage
        exit 0 ;;
-    i) INPUT="$OPTARG" ;;
-    o) OUTDIR=$OPTARG ;;
-    c) echo -e "\n$CITATION\n"
+    f) INPUT=$OPTARG;;            # name of input FASTA file or directory (required)
+    o) OUTDIR=$OPTARG;;           # name of output directory (required)
+    i) PERC_IDENTITY=$OPTARG;;    # minimum blast % identity (optional)
+    c) PERC_COVERAGE=$OPTARG;;    # minimum blast % coverage (optional)
+    r) echo -e "\n$CITATION\n"
        exit 0 ;;
   esac
 done
 
-#### If no variables, print help ####
-[[ $# == 0 ]] && { printHelp ; exit 1; }
+# If no variables, print usage message
+[[ $# == 0 ]] && { printUsage ; exit 1; }
+
+#------------------------------- Checks ---------------------------------
 
 echo "print input"
 echo "$INPUT"
@@ -89,32 +96,36 @@ echo "$INPUT"
 echo "print output"
 echo "$OUTDIR"
 
-#### Check for empty input variables ####
-[[ -z "$INPUT" ]] && { echo "Error: Missing an input contig file or directory." ; printHelp ; exit 1; }
-[[ -z "$OUTDIR" ]] && { echo "Error: Missing a specified output directory." ; printHelp ; exit 1; }
+# Check for empty input variables
+[[ -z "$INPUT" ]] && { echo "Error: Missing an input contig file or directory." ; printUsage ; exit 1; }
+[[ -z "$OUTDIR" ]] && { echo "Error: Missing a specified output directory." ; printUsage ; exit 1; }
 
-#### Check that input file/directory exists ####
+# Check that input file/directory exists
 [[ ! -f "$INPUT" ]] && [[ ! -d "$INPUT" ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
 
-#### Check for dependencies ####
+# Check for dependencies 
 checkDependencies mlst
 checkDependencies blastn
 
-#### Check that output directory exists, create if does not exist ####
+# Check that output directory exists, create if does not exist
 [[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
 
-#### Create mlst and BLAST output directories ####
+#---------------------------- Set-up ---------------------------------
+
+# Create mlst and BLAST output directories
 mkdir ${OUTDIR}/mlst
 mkdir ${OUTDIR}/blast
 
-#### Generate list of input FASTA files ####
+# Generate list of input FASTA files
 if [[ -f "$INPUT" ]]; then
     echo "$INPUT" > ${OUTDIR}/contigFiles.tmp
 elif [[ -d "$INPUT" ]]; then
     find "$INPUT" -maxdepth 1 -type f > ${OUTDIR}/contigFiles.tmp
 fi
 
-#### MLST and BLAST of each input fasta file ####
+#------------------------- Run for loop ------------------------------
+
+# MLST and BLAST of each input fasta file ####
 for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     
     FILE=${FASTA##*/}
@@ -136,11 +147,19 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
         # if non-zero exit status, print error and exit
         [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR} ; exit 1; }
 
+    ##### Step 3: Generate Report ##### 
+    generateReport
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -rf ${OUTDIR} ; exit 1; }
+
     echo "============== Analysis of ${NAME} Complete ==================" 
+
 done
  
-    
-#### Remove temp files ####
+ 
+#------------------------- Clean-up -------------------------------    
+
+# Remove temp files
 rm -f ${OUTDIR}/*.tmp
 
 echo "============== End =================="
