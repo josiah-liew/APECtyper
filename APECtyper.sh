@@ -118,13 +118,13 @@ mkdir ${OUTDIR}/blast
 # Build temp blast database
 makeBlastDB
         # if non-zero exit status, print error and exit
-        [[ $? -ne 0 ]] && { echo "Error when running makeblastdb." ; rm -f ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running makeblastdb." ; rm -rf ${OUTDIR}/* ; exit 1; }
     
 # Generate list of input FASTA files
 if [[ -f "$INPUT" ]]; then
     echo "$INPUT" > ${OUTDIR}/contigFiles.tmp
 elif [[ -d "$INPUT" ]]; then
-    find "$INPUT" -maxdepth 1 -type f > ${OUTDIR}/contigFiles.tmp
+    find "$INPUT" -maxdepth 1 -type f \( -iname \*.fasta -o -iname \*.fa -o -iname \*.fna \) > ${OUTDIR}/contigFiles.tmp
 fi
 
 #------------------------- Run for loop ------------------------------
@@ -144,17 +144,17 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     ##### Step 1: MLST #####
     mlstAnalysis
         # if non-zero exit status, print error and exit
-        [[ $? -ne 0 ]] && { echo "Error when running mlst." ; rm -f ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running mlst." ; rm -rf ${OUTDIR}/* ; exit 1; }
     
     ##### Step 2: BLAST ##### 
     blastAnalysis
         # if non-zero exit status, print error and exit
-        [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; rm -f ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR}/* ; exit 1; }
 
     ##### Step 3: Generate Report ##### 
     generateReport
         # if non-zero exit status, print error and exit
-        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -f ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -rf ${OUTDIR}/* ; exit 1; }
 
     echo "============== Analysis of ${NAME} Complete ==================" 
 
