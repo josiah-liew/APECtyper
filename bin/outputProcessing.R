@@ -73,7 +73,7 @@ blastFilterAll <- subset(blast, Coverage >= scov &
                     )
 
 write.table(blastFilterAll, file = paste0(out, "/blast_results_", name, ".tsv"),
-          row.names = FALSE, quote = FALSE)
+          sep = "\t", row.names = FALSE, quote = FALSE)
 
 #------------------------------------------
 # Identify APEC markers and define APEC pathotype
@@ -131,4 +131,4 @@ paste0("Pathotype: ", pathotype)
 df <- data.frame(Sample = name, "ST" = ST, "Serogroup" = O78, "APEC plasmid" = plasmid, "Pathotype" = pathotype)
 
 write.table(df, file = paste0(out, "/pathotype_results_", name, ".tsv"),
-          row.names = FALSE, quote = FALSE)
+          sep = "\t", row.names = FALSE, quote = FALSE)
