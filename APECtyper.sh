@@ -7,7 +7,7 @@
 # Required Software:
 ## NCBI BLAST+ blastn >= 2.9.0 (dependency of mlst)
 ## mlst (incl. dependencies)
-##
+## R
 ##
 
 #---------------------------- Globals --------------------------------
@@ -24,11 +24,12 @@ function printUsage () {
 	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA] -o [DIR]\n"
 	printf "\t-h\t\tprint this usage message\n"
 	printf "\t-v\t\tprint the version\n"
+	printf "\t-r\t\tprint citation\n"
 	printf "\t-f\t\tFASTA contig file or directory containing multiple FASTA files\n"
 	printf "\t-o\t\toutput directory\n"
 	printf "\t-i\t\tminimum blast % identity [default: 90]\n"
 	printf "\t-i\t\tminimum blast % coverage [default: 90]\n"
-	printf "\t-r\t\tprint citation\n"
+	printf "\t-s\t\tcombine reports from multiple samples into one file\n"
 }
 
 function checkDependencies () {
@@ -62,25 +63,40 @@ function generateReport () {
    Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY"
 }
 
+function combineReports () {
+   echo "===== Combining reports ====="
+   echo "number of samples: $COUNT"
+   echo "This is where reports will be combined."
+   # Rscript "$DIR/bin/combineReports.R" "$OUTDIR"
+}
+
+function cleanupOutdir () {
+    echo "===== Cleaning up outdir ====="
+    rm -f $OUTDIR/*.tmp
+    rm -f $OUTDIR/apec_refs.fa*
+}
+
 #------------------------------- Options ---------------------------------
 
 # Set defaults
 PERC_IDENTITY=90     # default minimum blast % identity
 PERC_COVERAGE=90     # default minimum blast % coverage
+SUMMARIZE='false'
 
 # Parse command options and arguments
-while getopts 'vhf:o:i:c:r' flag; do
+while getopts 'vhrf:o:i:c:s' flag; do
   case "${flag}" in
     v) echo "$VERSION"
        exit 0 ;;
     h) printUsage
        exit 0 ;;
+    r) echo -e "\n$CITATION\n"
+       exit 0 ;;
     f) INPUT=$OPTARG;;            # name of input FASTA file or directory (required)
     o) OUTDIR=$OPTARG;;           # name of output directory (required)
     i) PERC_IDENTITY=$OPTARG;;    # minimum blast % identity (optional)
     c) PERC_COVERAGE=$OPTARG;;    # minimum blast % coverage (optional)
-    r) echo -e "\n$CITATION\n"
-       exit 0 ;;
+    s) SUMMARIZE='true'           # whether to summarize all sample results into a single output file
   esac
 done
 
@@ -105,6 +121,7 @@ echo "$OUTDIR"
 # Check for dependencies 
 checkDependencies mlst
 checkDependencies blastn
+checkDependencies R
 
 # Check that output directory exists, create if does not exist
 [[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
@@ -159,13 +176,22 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     echo "============== Analysis of ${NAME} Complete ==================" 
 
 done
- 
+
+#----------------- Combine reports (optional) ----------------------
+
+##### Step 4: Combine Reports (optional) ##### 
+
+COUNT=$(cat ${OUTDIR}/contigFiles.tmp | wc -l)
+[[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && combineReports
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when combining reports in R." ; cleanupOutdir ; exit 1; }
  
 #------------------------- Clean-up -------------------------------    
 
-# Remove temp files
-rm -f $OUTDIR/*.tmp
-rm -f $OUTDIR/apec_refs.fa*
+cleanupOutdir
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when removing temp files from output directory." ; exit 1; }
+
 
 echo "============== End =================="
 exit 0
