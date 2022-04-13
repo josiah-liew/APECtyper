@@ -105,7 +105,7 @@ if ("O78" %in% markers) {
 paste0("Serogroup: ", O78)
 
 if (!is.numeric(ST)){
-  highRiskST <- "ST could not be identified - check if sample is really E. coli."
+  highRiskST <- "Error"
   }else if (ST %in% c(131, 23, 428, 355) || O78 == "Found" || ST == 117 & O78 == "Found") {
     highRiskST <- "Present"
     }else {
@@ -115,7 +115,7 @@ if (!is.numeric(ST)){
 paste0("High Risk ST: ", highRiskST)
 
 if (!is.numeric(ST)){
-  pathotype <- "Not E. coli"
+  pathotype <- "ST could not be identified - check if isolate is really E. coli"
   }else if (plasmid == "Present" & highRiskST == "Present"){
     pathotype <- "High Risk APEC"
     }else if (plasmid == "Present" & highRiskST == "Absent"){

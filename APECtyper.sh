@@ -45,8 +45,6 @@ function checkDependencies () {
 function mlstAnalysis () {
     echo "======== Running mlst ========"
     mlst --scheme ecoli --csv $FASTA --label $NAME > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
-    ROWS=$( cat ${OUTDIR}/mlst/mlst_results_${NAME}.csv | wc -l )
-    [[ $ROWS -gt 1 ]] && { return 1; }  
 }
 
 function makeBlastDB () {
