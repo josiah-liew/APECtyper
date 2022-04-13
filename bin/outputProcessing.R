@@ -34,11 +34,6 @@ mlst <- read.csv(paste0(out, "/mlst/mlst_results_", name, ".csv"),
                                "gyrB", "icd", "mdh", "purA", "recA")
                  )
 
-# Check that mlst file has exactly one row
-if (nrow(mlst) != 1) {
-  print("Error in mlst output.")
-}
-
 mlst
 
 ST <- mlst[, "ST"]
@@ -109,24 +104,27 @@ if ("O78" %in% markers) {
 
 paste0("Serogroup: ", O78)
 
-if (ST %in% c(131, 23, 428, 355) || O78 == "Found" || ST == 117 & O78 == "Found") {
-  highRiskST <- "Present"
-  }else {
-    highRiskST <- "Absent"
-    }
+if (!is.numeric(ST)){
+  highRiskST <- "ST could not be identified - check if sample is really E. coli."
+  }else if (ST %in% c(131, 23, 428, 355) || O78 == "Found" || ST == 117 & O78 == "Found") {
+    highRiskST <- "Present"
+    }else {
+      highRiskST <- "Absent"
+      }
 
 paste0("High Risk ST: ", highRiskST)
 
-
-if (plasmid == "Present" & highRiskST == "Present"){
-  pathotype <- "High Risk APEC"
-  }else if (plasmid == "Present" & highRiskST == "Absent"){
-    pathotype <- "APEC"
-    }else if (plasmid == "Absent" & highRiskST == "Present"){
-      pathotype <- "High Risk non-APEC"
-      }else if (plasmid == "Absent" & highRiskST == "Absent"){
-        pathotype <- "non-APEC"
-        }
+if (!is.numeric(ST)){
+  pathotype <- "Not E. coli"
+  }else if (plasmid == "Present" & highRiskST == "Present"){
+    pathotype <- "High Risk APEC"
+    }else if (plasmid == "Present" & highRiskST == "Absent"){
+      pathotype <- "APEC"
+      }else if (plasmid == "Absent" & highRiskST == "Present"){
+        pathotype <- "High Risk non-APEC"
+        }else if (plasmid == "Absent" & highRiskST == "Absent"){
+          pathotype <- "non-APEC"
+          }
 
 paste0("Pathotype: ", pathotype)
 
