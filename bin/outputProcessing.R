@@ -20,11 +20,11 @@ ident
 
 #------------------------------------------
 
-mlst <- read.csv("/Users/elizabethmiller/Desktop/Projects/APECtyper/out_multiSeq/mlst/mlst_results_PP394_S59.csv",
-                 header = FALSE, 
-                 col.names = c("name", "scheme", "ST", "adk", "fumC", 
-                               "gyrB", "icd", "mdh", "purA", "recA")
-)
+# mlst <- read.csv("/Users/elizabethmiller/Desktop/Projects/APECtyper/out_multiSeq/mlst/mlst_results_PP394_S59.csv",
+#                  header = FALSE, 
+#                  col.names = c("name", "scheme", "ST", "adk", "fumC", 
+#                                "gyrB", "icd", "mdh", "purA", "recA")
+# )
 
 
 # Load mlst results csv file
@@ -48,13 +48,13 @@ ST
 #------------------------------------------
 # Load BLAST results tsv file
 
-blast <- read.table("/Users/elizabethmiller/Desktop/Projects/APECtyper/out_multiSeq/blast/blast_results_PP394_S59.tsv",
-                    header = FALSE, sep = "\t", 
-                    col.names = c("Sequence", "Gene", 
-                                  "GeneLength", "AlignmentLength", "Mismatches", "Gaps", 
-                                  "SequenceStart", "SequenceEnd", "GeneStart", "GeneEnd", 
-                                  "Identity", "Evalue", "Bitscore")
-                    )
+# blast <- read.table("/Users/elizabethmiller/Desktop/Projects/APECtyper/out_multiSeq/blast/blast_results_PP394_S59.tsv",
+#                     header = FALSE, sep = "\t", 
+#                     col.names = c("Sequence", "Gene", 
+#                                   "GeneLength", "AlignmentLength", "Mismatches", "Gaps", 
+#                                   "SequenceStart", "SequenceEnd", "GeneStart", "GeneEnd", 
+#                                   "Identity", "Evalue", "Bitscore")
+#                     )
 
 blast <- read.table(paste0(out, "/blast/blast_results_", name, ".tsv"),
                     header = FALSE, sep = "\t",
