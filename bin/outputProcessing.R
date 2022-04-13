@@ -72,7 +72,7 @@ blastFilterAll <- subset(blast, Coverage >= scov &
                       Gene != "O78|O-antigen_gene_cluster_partial|FJ940775.1"
                     )
 
-write.csv(blastFilterAll, file = paste0(out, "/blast_results_", name, ".csv"),
+write.table(blastFilterAll, file = paste0(out, "/blast_results_", name, ".tsv"),
           row.names = FALSE, quote = FALSE)
 
 #------------------------------------------
@@ -130,5 +130,5 @@ paste0("Pathotype: ", pathotype)
 
 df <- data.frame(Sample = name, "ST" = ST, "Serogroup" = O78, "APEC plasmid" = plasmid, "Pathotype" = pathotype)
 
-write.csv(df, file = paste0(out, "/pathotype_results_", name, ".csv"),
+write.table(df, file = paste0(out, "/pathotype_results_", name, ".tsv"),
           row.names = FALSE, quote = FALSE)
