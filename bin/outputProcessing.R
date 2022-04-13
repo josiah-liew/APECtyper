@@ -101,7 +101,7 @@ if ("ompTp" %in% markers & "hlyF" %in% markers) {
 
 paste0("APEC plasmid: ", plasmid)
 
-if ("O78" %in% genes) {
+if ("O78" %in% markers) {
   O78 <- "O78"
   }else {
     O78 <- "Not O78"
