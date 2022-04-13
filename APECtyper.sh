@@ -65,8 +65,8 @@ function generateReport () {
 
 function compileReports () {
    echo "===== Compiling reports ====="
-   tail -1 pathotype_results_${NAME}.tsv >> pathotype_results_summary.tsv
-   tail -n +2 blast_results_${NAME}.tsv | sed "s/^/${NAME}\t/"  >> blast_results_summary.tsv
+   tail -1 ${OUTDIR}/pathotype_results_${NAME}.tsv >> ${OUTDIR}/pathotype_results_summary.tsv
+   tail -n +2 ${OUTDIR}/blast_results_${NAME}.tsv | sed "s/^/${NAME}\t/"  >> ${OUTDIR}/blast_results_summary.tsv
 }
 
 function cleanupOutdir () {
@@ -186,8 +186,8 @@ done
 
 # Add headers to summary files
 if [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]]; then
-   sed  -i '1i Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype' pathotype_results_summary.tsv
-   sed  -i '1i Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage' blast_results_summary.tsv
+   sed  -i '1i Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype' ${OUTDIR}/pathotype_results_summary.tsv
+   sed  -i '1i Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage' ${OUTDIR}/blast_results_summary.tsv
 fi
     
 #------------------------- Clean-up -------------------------------    
@@ -195,7 +195,6 @@ fi
 cleanupOutdir
         # if non-zero exit status, print error and exit
         [[ $? -ne 0 ]] && { echo "Error when removing temp files from output directory." ; exit 1; }
-
 
 echo "============== End =================="
 exit 0
