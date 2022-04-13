@@ -100,7 +100,7 @@ while getopts 'vhrf:o:i:c:s' flag; do
   esac
 done
 
-# If no variables, print usage message
+# If no variables, print usage message and exit
 [[ $# == 0 ]] && { printUsage ; exit 1; }
 
 #------------------------------- Checks ---------------------------------
@@ -134,7 +134,7 @@ mkdir ${OUTDIR}/blast
 
 # Build temp blast database
 makeBlastDB
-        # if non-zero exit status, print error and exit
+        # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when running makeblastdb." ; rm -rf ${OUTDIR}/* ; exit 1; }
     
 # Generate list of input FASTA files
@@ -160,17 +160,17 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     
     ##### Step 1: MLST #####
     mlstAnalysis
-        # if non-zero exit status, print error and exit
+        # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when running mlst." ; rm -rf ${OUTDIR}/* ; exit 1; }
     
     ##### Step 2: BLAST ##### 
     blastAnalysis
-        # if non-zero exit status, print error and exit
+        # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR}/* ; exit 1; }
 
     ##### Step 3: Generate Report ##### 
     generateReport
-        # if non-zero exit status, print error and exit
+        # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -rf ${OUTDIR}/* ; exit 1; }
 
     echo "============== Analysis of ${NAME} Complete ==================" 
@@ -183,7 +183,7 @@ done
 
 COUNT=$(cat ${OUTDIR}/contigFiles.tmp | wc -l)
 [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && combineReports
-        # if non-zero exit status, print error and exit
+        # if non-zero exit status, print error, clean-up outdir, and exit
         [[ $? -ne 0 ]] && { echo "Error when combining reports in R." ; cleanupOutdir ; exit 1; }
  
 #------------------------- Clean-up -------------------------------    
