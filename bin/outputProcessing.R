@@ -130,12 +130,6 @@ if (plasmid == "Present" & highRiskST == "Present"){
 
 paste0("Pathotype: ", pathotype)
 
-ST
-Serogroup
-hlyF
-ompT
-Pathotype
-
 df <- data.frame(Sample = name, "ST" = ST, "Serogroup" = O78, "APEC plasmid" = plasmid, "Pathotype" = pathotype)
 
 write.csv(df, file = paste0(out, "/pathotype_results_", name, ".csv"),
