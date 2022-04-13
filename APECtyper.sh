@@ -63,11 +63,10 @@ function generateReport () {
    Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY"
 }
 
-function combineReports () {
-   echo "===== Combining reports ====="
-   echo "number of samples: $COUNT"
-   echo "This is where reports will be combined."
-   # Rscript "$DIR/bin/combineReports.R" "$OUTDIR"
+function compileReports () {
+   echo "===== Compiling reports ====="
+   tail -1 pathotype_results_${NAME}.tsv >> pathotype_results_summary.tsv
+   tail -n +2 blast_results_${NAME}.tsv | sed "s/^/${NAME}\t/"  >> blast_results_summary.tsv
 }
 
 function cleanupOutdir () {
@@ -144,6 +143,8 @@ elif [[ -d "$INPUT" ]]; then
     find "$INPUT" -maxdepth 1 -type f \( -iname \*.fasta -o -iname \*.fa -o -iname \*.fna \) > ${OUTDIR}/contigFiles.tmp
 fi
 
+COUNT=$(cat ${OUTDIR}/contigFiles.tmp | wc -l)
+
 #------------------------- Run for loop ------------------------------
 
 # MLST and BLAST of each input fasta file ####
@@ -173,18 +174,22 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
         # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -rf ${OUTDIR}/* ; exit 1; }
 
+    ##### Step 4: Compile Reports (optional) ##### 
+    [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
+    
+    
     echo "============== Analysis of ${NAME} Complete ==================" 
 
 done
 
-#----------------- Combine reports (optional) ----------------------
+#----------------- Compile reports (optional) ----------------------
 
-##### Step 4: Combine Reports (optional) ##### 
-
-COUNT=$(cat ${OUTDIR}/contigFiles.tmp | wc -l)
-[[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && combineReports
-# && [[ $? -ne 0 ]] && { echo "Error when combining reports in R." ; cleanupOutdir ; exit 1; }
-        
+# Add headers to summary files
+if [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]]; then
+   sed  -i '1i Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype' pathotype_results_summary.tsv
+   sed  -i '1i Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage' blast_results_summary.tsv
+fi
+    
 #------------------------- Clean-up -------------------------------    
 
 cleanupOutdir
