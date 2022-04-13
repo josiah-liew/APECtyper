@@ -104,6 +104,8 @@ done
 
 #------------------------------- Checks ---------------------------------
 
+exec >${OUTDIR}/logfile.out 2>&1
+
 echo "print input"
 echo "$INPUT"
 
