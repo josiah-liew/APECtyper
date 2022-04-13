@@ -182,10 +182,10 @@ done
 ##### Step 4: Combine Reports (optional) ##### 
 
 COUNT=$(cat ${OUTDIR}/contigFiles.tmp | wc -l)
-[[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && combineReports
-        # if non-zero exit status, print error, clean-up outdir, and exit
-        [[ $? -ne 0 ]] && { echo "Error when combining reports in R." ; cleanupOutdir ; exit 1; }
- 
+[[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && combineReports && \
+# if non-zero exit status, print error, clean-up outdir, and exit
+[[ $? -ne 0 ]] && { echo "Error when combining reports in R." ; cleanupOutdir ; exit 1; }
+        
 #------------------------- Clean-up -------------------------------    
 
 cleanupOutdir
