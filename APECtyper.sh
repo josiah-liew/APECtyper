@@ -47,7 +47,7 @@ function mlstAnalysis () {
 function makeBlastDB () {
     echo "Making BLASTn database..."
     cp $DIR/db/apec_refs.fa $OUTDIR
-    makeblastdb -in $OUTDIR/apec_refs.fa -dbtype nucl -title "APEC Ref Seqs"
+    makeblastdb -in $OUTDIR/apec_refs.fa -dbtype nucl -title "APEC Ref Seqs" -logfile $OUTDIR/makeblastdb.log
 }
 
 function blastAnalysis () {
@@ -70,6 +70,7 @@ function cleanupOutdir () {
     echo "Cleaning up..."
     rm -f $OUTDIR/*.tmp
     rm -f $OUTDIR/apec_refs.fa*
+    rm -f $OUTDIR/makeblastdb.log
 }
 
 #------------------------------- Welcome ---------------------------------
@@ -152,11 +153,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     FILE=${FASTA##*/}
     NAME=${FILE%.*}
     
-    echo $FASTA
-    echo $FILE
-    echo $NAME
-    
-    echo "============== Starting analysis of ${NAME} =============="
+    echo "Starting analysis of ${NAME}..."
     
     ##### Step 1: MLST #####
     mlstAnalysis
@@ -177,7 +174,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
     
     
-    echo "============== Analysis of ${NAME} is complete ==============" 
+    echo "Analysis of ${NAME} is complete." 
 
 done
 
