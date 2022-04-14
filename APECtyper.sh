@@ -144,6 +144,12 @@ fi
 
 COUNT=$(cat ${OUTDIR}/contigFiles.tmp | wc -l)
 
+# Create empty summary files with headers (optional)
+if [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]]; then
+   echo "Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype" > ${OUTDIR}/pathotype_results_summary.tsv
+   echo "Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage" >${OUTDIR}/blast_results_summary.tsv
+fi
+
 #------------------------- Run for loop ------------------------------
 
 # MLST and BLAST of each input fasta file ####
@@ -172,19 +178,9 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     ##### Step 4: Compile Reports (optional) ##### 
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
     
-    
     echo "Analysis of ${NAME} is complete." 
 
 done
-
-#----------------- Compile reports (optional) ----------------------
-
-# Add headers to summary files
-if [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]]; then
-   echo "Compiling reports..."
-   sed  -i '1i Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype' ${OUTDIR}/pathotype_results_summary.tsv
-   sed  -i '1i Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage' ${OUTDIR}/blast_results_summary.tsv
-fi
     
 #------------------------- Clean-up -------------------------------    
 
