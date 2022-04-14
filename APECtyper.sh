@@ -61,7 +61,6 @@ function generateReport () {
 }
 
 function compileReports () {
-   echo "Compiling reports..."
    tail -1 ${OUTDIR}/pathotype_results_${NAME}.tsv >> ${OUTDIR}/pathotype_results_summary.tsv
    tail -n +2 ${OUTDIR}/blast_results_${NAME}.tsv | sed "s/^/${NAME}\t/"  >> ${OUTDIR}/blast_results_summary.tsv
 }
@@ -182,6 +181,7 @@ done
 
 # Add headers to summary files
 if [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]]; then
+   echo "Compiling reports..."
    sed  -i '1i Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype' ${OUTDIR}/pathotype_results_summary.tsv
    sed  -i '1i Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage' ${OUTDIR}/blast_results_summary.tsv
 fi
