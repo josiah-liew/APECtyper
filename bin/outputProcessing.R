@@ -10,6 +10,12 @@ scov <- as.numeric(args[3])
 ident <- as.numeric(args[4])
 
 #------------------------------------------
+# Load ECTyper results tsv file
+ectyper <- read.table(paste0(out, "/serotype/output.tsv"),
+                 header = TRUE, sep = "\t"
+                 )
+
+#------------------------------------------
 # Load mlst results tsv file
 
 mlst <- read.table(paste0(out, "/mlst/mlst_results_", name, ".tsv"),
@@ -39,9 +45,8 @@ blast$"Coverage" <- (blast$AlignmentLength - blast$Gaps) / blast$GeneLength * 10
 # (using either user-defined subject coverage and identity or default values)
 
 blastFilterAll <- subset(blast, Coverage >= scov & 
-                      Identity >= ident & 
-                      Gene != "O78|O-antigen_gene_cluster_partial|FJ940775.1"
-                    )
+                         Identity >= ident
+                        )
 
 write.table(blastFilterAll, file = paste0(out, "/blast_results_", name, ".tsv"),
           sep = "\t", row.names = FALSE, quote = FALSE)
@@ -51,8 +56,7 @@ write.table(blastFilterAll, file = paste0(out, "/blast_results_", name, ".tsv"),
 
 blastFilterID <- subset(blast, "Coverage" >= 90 & 
                              "Identity" >= 90 & 
-                             Gene %in% c("O78|O-antigen_gene_cluster_partial|FJ940775.1",
-                                         "ompTp|plasmid-encoded_outer_membrane_protease|AY545598.5",
+                             Gene %in% c("ompTp|plasmid-encoded_outer_membrane_protease|AY545598.5",
                                          "hlyF|avian_hemolysin_and_antimicrobial_peptide_degradation|DQ381420.1")
                            )
 
@@ -66,39 +70,44 @@ if ("ompTp" %in% markers & "hlyF" %in% markers) {
 
 paste0("APEC plasmid: ", plasmid)
 
-if ("O78" %in% markers) {
+serotype <- ectyper[1, "Serotype"]
+Otype <- ectyper[1, "O-type"]
+
+if ("O78" == Otype) {
   O78 <- "O78"
   }else {
     O78 <- "Not O78"
     }
 
-paste0("Serogroup: ", O78)
+paste0("Serotype: ", serotype)
 
 if (!is.numeric(ST)){
-  highRiskST <- "Error"
-  }else if (ST %in% c(131, 23, 428, 355) || O78 == "Found") {
-    highRiskST <- "Present"
-    }else {
-      highRiskST <- "Absent"
-      }
+  highRiskST <- "Unknown ST"
+  }else if (ST %in% c(131, 23, 428, 355)) {
+    highRiskST <- "Yes"
+    }else if (O78 == "O78") {
+      highRiskST <- "Yes"
+      }else {
+        highRiskST <- "No"
+        }
 
 paste0("High Risk ST: ", highRiskST)
 
 if (!is.numeric(ST)){
-  pathotype <- "ST could not be identified - check if isolate is really E. coli"
-  }else if (plasmid == "Present" & highRiskST == "Present"){
+  pathotype <- "Unknown ST - pathotype could not be determined."
+  }else if (plasmid == "Present" & highRiskST == "Yes"){
     pathotype <- "High Risk APEC"
-    }else if (plasmid == "Present" & highRiskST == "Absent"){
+    }else if (plasmid == "Present" & highRiskST == "No"){
       pathotype <- "APEC"
-      }else if (plasmid == "Absent" & highRiskST == "Present"){
+      }else if (plasmid == "Absent" & highRiskST == "Yes"){
         pathotype <- "High Risk non-APEC"
-        }else if (plasmid == "Absent" & highRiskST == "Absent"){
+        }else if (plasmid == "Absent" & highRiskST == "No"){
           pathotype <- "non-APEC"
           }
 
 paste0("Pathotype: ", pathotype)
 
-df <- data.frame(Sample = name, "ST" = ST, "Serogroup" = O78, "APEC plasmid" = plasmid, "Pathotype" = pathotype)
+df <- data.frame(Sample = name, "ST" = ST, "Serotype" = serotype, "APEC_plasmid" = plasmid, "Pathotype" = pathotype)
 
 write.table(df, file = paste0(out, "/pathotype_results_", name, ".tsv"),
           sep = "\t", row.names = FALSE, quote = FALSE)

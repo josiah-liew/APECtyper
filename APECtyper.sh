@@ -1,14 +1,12 @@
 #!/bin/bash
 
-########### APEC Typing Pipeline ###########
-
-# Basic steps: TBD
+#=========== APEC Typing Pipeline ===========#
 
 # Required Software:
-## NCBI BLAST+ blastn >= 2.9.0 (dependency of mlst)
-## mlst (incl. dependencies)
+## ECTyper (https://github.com/phac-nml/ecoli_serotyping)
+## mlst (https://github.com/tseemann/mlst)
+## NCBI BLAST+ blastn >= 2.9.0 (already dependency of mlst)
 ## R
-##
 
 #---------------------------- Globals --------------------------------
 
@@ -37,6 +35,12 @@ function checkDependencies () {
     then
         printf "Error: dependency $1 could not be located.\n" && exit 1
     fi
+}
+
+function serotypeAnalysis () {
+    echo "Running ECTyper..."
+    ectyper -i $FASTA -o ${OUTDIR}/serotype --cores $THREADS --verify --percentIdentityOtype 90 --percentIdentityHtype 95 --percentCoverageOtype 95 --percentCoverageHtype 50
+    SPECIES=$(awk -F'\t' 'NR!=1{print $2}' ${OUTDIR}/serotype/output.tsv)
 }
 
 function mlstAnalysis () {
@@ -119,6 +123,7 @@ done
 [[ ! -f "$INPUT" ]] && [[ ! -d "$INPUT" ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
 
 # Check for dependencies 
+checkDependencies ectyper
 checkDependencies mlst
 checkDependencies blastn
 checkDependencies R
@@ -131,6 +136,7 @@ checkDependencies R
 # Create mlst and BLAST output directories
 mkdir -p ${OUTDIR}/mlst
 mkdir -p ${OUTDIR}/blast
+mkdir -p ${OUTDIR}/serotype
 
 # Build temp blast database
 makeBlastDB
@@ -162,22 +168,28 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     
     echo "Starting analysis of ${NAME}..."
     
-    ##### Step 1: MLST #####
+    ##### STEP 1: ECTyper #####
+    serotypeAnalysis
+        # if non-zero exit status, print error, rm outdir contents, and exit
+        [[ $? -ne 0 ]] && { echo "Error when running ECTyper." ; rm -rf ${OUTDIR}/* ; exit 1; }
+        [ $SPECIES != "Escherichia coli" ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
+    
+    ##### Step 2: mlst #####
     mlstAnalysis
         # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when running mlst." ; rm -rf ${OUTDIR}/* ; exit 1; }
     
-    ##### Step 2: BLAST ##### 
+    ##### Step 3: BLAST ##### 
     blastAnalysis
         # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR}/* ; exit 1; }
 
-    ##### Step 3: Generate Report ##### 
+    ##### Step 4: Generate Report ##### 
     generateReport
         # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -rf ${OUTDIR}/* ; exit 1; }
 
-    ##### Step 4: Compile Reports (optional) ##### 
+    ##### Step 5: Compile Reports (optional) ##### 
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
     
     echo "Analysis of ${NAME} is complete." 
@@ -194,4 +206,5 @@ cleanupOutdir
 
 echo "============== APECtyper is complete =================="
 echo "Please cite: $CITATION"
+
 exit 0
