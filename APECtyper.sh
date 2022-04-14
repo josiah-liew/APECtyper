@@ -35,45 +35,48 @@ function printUsage () {
 function checkDependencies () {
     if ! command -v $1 >/dev/null 2>&1
     then
-        printf "Error: dependency $1 could not be found.\n" 
-        exit 1
-    else
-        printf "Found: $1 \n"
+        printf "Error: dependency $1 could not be located.\n" && exit 1
     fi
 }
 
 function mlstAnalysis () {
-    echo "======== Running mlst ========"
-    mlst --scheme ecoli --csv $FASTA --label $NAME > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
+    echo "Running mlst..."
+    mlst --scheme ecoli --quiet --csv $FASTA --label $NAME > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
 }
 
 function makeBlastDB () {
-    echo "======== Making BLAST database ========"
+    echo "Making BLASTn database..."
     cp $DIR/db/apec_refs.fa $OUTDIR
     makeblastdb -in $OUTDIR/apec_refs.fa -dbtype nucl -title "APEC Ref Seqs"
 }
 
 function blastAnalysis () {
-    echo "===== Running BLAST ====="
+    echo "Running BLASTn..."
     blastn -query $FASTA -db $OUTDIR/apec_refs.fa -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
 }
 
 function generateReport () {
-   echo "===== Generating report ====="
+   echo "Generating report..."
    Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY"
 }
 
 function compileReports () {
-   echo "===== Compiling reports ====="
+   echo "Compiling reports..."
    tail -1 ${OUTDIR}/pathotype_results_${NAME}.tsv >> ${OUTDIR}/pathotype_results_summary.tsv
    tail -n +2 ${OUTDIR}/blast_results_${NAME}.tsv | sed "s/^/${NAME}\t/"  >> ${OUTDIR}/blast_results_summary.tsv
 }
 
 function cleanupOutdir () {
-    echo "===== Cleaning up outdir ====="
+    echo "Cleaning up..."
     rm -f $OUTDIR/*.tmp
     rm -f $OUTDIR/apec_refs.fa*
 }
+
+#------------------------------- Welcome ---------------------------------
+
+echo "============== Running APECtyper =================="
+echo $VERSION
+echo "Please cite: $CITATION"
 
 #------------------------------- Options ---------------------------------
 
@@ -104,13 +107,7 @@ done
 
 #------------------------------- Checks ---------------------------------
 
-exec >${OUTDIR}/logfile.out 2>&1
-
-echo "print input"
-echo "$INPUT"
-
-echo "print output"
-echo "$OUTDIR"
+# exec >${OUTDIR}/logfile.out 2>&1
 
 # Check for empty input variables
 [[ -z "$INPUT" ]] && { echo "Error: Missing an input contig file or directory." ; printUsage ; exit 1; }
@@ -159,7 +156,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     echo $FILE
     echo $NAME
     
-    echo "============== Analysis of ${NAME} =================="
+    echo "============== Starting analysis of ${NAME} =============="
     
     ##### Step 1: MLST #####
     mlstAnalysis
@@ -180,7 +177,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
     
     
-    echo "============== Analysis of ${NAME} Complete ==================" 
+    echo "============== Analysis of ${NAME} is complete ==============" 
 
 done
 
@@ -198,5 +195,8 @@ cleanupOutdir
         # if non-zero exit status, print error and exit
         [[ $? -ne 0 ]] && { echo "Error when removing temp files from output directory." ; exit 1; }
 
-echo "============== End =================="
+#------------------------- Good-bye -------------------------
+
+echo "============== APECtyper is complete =================="
+echo "Please cite: $CITATION"
 exit 0
