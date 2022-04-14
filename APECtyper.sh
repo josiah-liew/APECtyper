@@ -127,8 +127,8 @@ checkDependencies R
 #---------------------------- Set-up ---------------------------------
 
 # Create mlst and BLAST output directories
-mkdir ${OUTDIR}/mlst
-mkdir ${OUTDIR}/blast
+mkdir -p ${OUTDIR}/mlst
+mkdir -p ${OUTDIR}/blast
 
 # Build temp blast database
 makeBlastDB
