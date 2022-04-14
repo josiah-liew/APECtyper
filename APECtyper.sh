@@ -41,7 +41,7 @@ function checkDependencies () {
 
 function mlstAnalysis () {
     echo "Running mlst..."
-    mlst --scheme ecoli --quiet --csv $FASTA --label $NAME > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
+    mlst --scheme ecoli --quiet --csv $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
 }
 
 function makeBlastDB () {
@@ -52,7 +52,7 @@ function makeBlastDB () {
 
 function blastAnalysis () {
     echo "Running BLASTn..."
-    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
+    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_thread $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
 }
 
 function generateReport () {
@@ -81,12 +81,13 @@ echo "Please cite: $CITATION"
 #------------------------------- Options ---------------------------------
 
 # Set defaults
+THREADS=1            # default number of threads to use with mlst and BLAST
 PERC_IDENTITY=90     # default minimum blast % identity
 PERC_COVERAGE=90     # default minimum blast % coverage
 SUMMARIZE='false'
 
 # Parse command options and arguments
-while getopts 'vhrf:o:i:c:s' flag; do
+while getopts 'vhrf:o:i:c:t:s' flag; do
   case "${flag}" in
     v) echo "$VERSION"
        exit 0 ;;
@@ -98,6 +99,7 @@ while getopts 'vhrf:o:i:c:s' flag; do
     o) OUTDIR=$OPTARG;;           # name of output directory (required)
     i) PERC_IDENTITY=$OPTARG;;    # minimum blast % identity (optional)
     c) PERC_COVERAGE=$OPTARG;;    # minimum blast % coverage (optional)
+    t) THREADS=$OPTARG;;          # number of threads for running mlst and BLAST 
     s) SUMMARIZE='true'           # whether to summarize all sample results into a single output file
   esac
 done
