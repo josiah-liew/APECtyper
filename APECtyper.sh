@@ -41,7 +41,7 @@ function checkDependencies () {
 
 function mlstAnalysis () {
     echo "Running mlst..."
-    mlst --scheme ecoli --quiet --csv $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
+    mlst --scheme ecoli --quiet $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
 }
 
 function makeBlastDB () {
@@ -148,8 +148,8 @@ COUNT=$(cat ${OUTDIR}/contigFiles.tmp | wc -l)
 
 # Create empty summary files with headers (optional)
 if [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]]; then
-   echo "Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype" > ${OUTDIR}/pathotype_results_summary.tsv
-   echo "Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage" >${OUTDIR}/blast_results_summary.tsv
+   echo -e "Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype" > ${OUTDIR}/pathotype_results_summary.tsv
+   echo -e "Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage" >${OUTDIR}/blast_results_summary.tsv
 fi
 
 #------------------------- Run for loop ------------------------------
