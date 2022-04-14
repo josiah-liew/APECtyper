@@ -106,7 +106,7 @@ paste0("Serogroup: ", O78)
 
 if (!is.numeric(ST)){
   highRiskST <- "Error"
-  }else if (ST %in% c(131, 23, 428, 355) || O78 == "Found" || ST == 117 & O78 == "Found") {
+  }else if (ST %in% c(131, 23, 428, 355) || O78 == "Found") {
     highRiskST <- "Present"
     }else {
       highRiskST <- "Absent"
