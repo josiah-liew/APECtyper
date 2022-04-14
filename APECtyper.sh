@@ -56,7 +56,7 @@ function makeBlastDB () {
 
 function blastAnalysis () {
     echo "Running BLASTn..."
-    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_thread $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
+    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_threads $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
 }
 
 function generateReport () {
@@ -172,7 +172,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     serotypeAnalysis
         # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when running ECTyper." ; rm -rf ${OUTDIR}/* ; exit 1; }
-        [ $SPECIES != "Escherichia coli" ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
+        [[ $SPECIES != "Escherichia coli" ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
     
     ##### Step 2: mlst #####
     mlstAnalysis
