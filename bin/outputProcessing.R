@@ -10,10 +10,10 @@ scov <- as.numeric(args[3])
 ident <- as.numeric(args[4])
 
 #------------------------------------------
-# Load mlst results csv file
+# Load mlst results tsv file
 
-mlst <- read.csv(paste0(out, "/mlst/mlst_results_", name, ".csv"),
-                 header = FALSE, 
+mlst <- read.table(paste0(out, "/mlst/mlst_results_", name, ".tsv"),
+                 header = FALSE, sep = "\t",
                  col.names = c("name", "scheme", "ST", "adk", "fumC", 
                                "gyrB", "icd", "mdh", "purA", "recA")
                  )
