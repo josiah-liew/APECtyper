@@ -5,7 +5,7 @@
 # Required Software:
 ## ECTyper (https://github.com/phac-nml/ecoli_serotyping)
 ## mlst (https://github.com/tseemann/mlst)
-## NCBI BLAST+ blastn >= 2.9.0 (already dependency of mlst)
+## NCBI BLAST+ blastn
 ## R
 
 #---------------------------- Globals --------------------------------
@@ -23,6 +23,7 @@ function printUsage () {
 	printf "\t-h\t\tprint this usage message\n"
 	printf "\t-v\t\tprint the version\n"
 	printf "\t-r\t\tprint citation\n"
+	printf "\t-d\t\tcheck for dependencies\n"
 	printf "\t-f\t\tFASTA contig file or directory containing multiple FASTA files\n"
 	printf "\t-o\t\toutput directory\n"
 	printf "\t-i\t\tminimum blast % identity [default: 90]\n"
@@ -31,11 +32,20 @@ function printUsage () {
 	printf "\t-s\t\tcombine reports from multiple samples into single tsv file\n"
 }
 
-function checkDependencies () {
-    if ! command -v $1 >/dev/null 2>&1
-    then
-        printf "Error: dependency $1 could not be located.\n" && exit 1
+function checkDependency () {
+    PACKAGE=$(command -v $1)
+    if [ -z "$PACKAGE" ]; then
+        echo -e "\nError: dependency $1 could not be located.\n" && exit 1
+        else
+        echo -e "\nFound "$1": $PACKAGE\n"
     fi
+}
+
+function checkAllDependencies () {
+    checkDependencies ectyper
+    checkDependencies mlst
+    checkDependencies blastn
+    checkDependencies R
 }
 
 function serotypeAnalysis () {
@@ -92,13 +102,15 @@ PERC_COVERAGE=90     # default minimum blast % coverage
 SUMMARIZE='false'
 
 # Parse command options and arguments
-while getopts 'vhrf:o:i:c:t:s' flag; do
+while getopts 'vhrdf:o:i:c:t:s' flag; do
   case "${flag}" in
     v) echo "$VERSION"
        exit 0 ;;
     h) printUsage
        exit 0 ;;
     r) echo -e "\n$CITATION\n"
+       exit 0 ;;
+    d) checkAllDependencies
        exit 0 ;;
     f) INPUT=$OPTARG;;            # name of input FASTA file or directory (required)
     o) OUTDIR=$OPTARG;;           # name of output directory (required)
@@ -124,10 +136,7 @@ done
 [[ ! -f "$INPUT" ]] && [[ ! -d "$INPUT" ]] && { echo "Error: Input file/directory does not exist." ; exit 1; }
 
 # Check for dependencies 
-checkDependencies ectyper
-checkDependencies mlst
-checkDependencies blastn
-checkDependencies R
+checkAllDependencies
 
 # Check that output directory exists, create if does not exist
 [[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
