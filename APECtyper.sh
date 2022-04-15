@@ -172,7 +172,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     serotypeAnalysis
         # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when running ECTyper." ; rm -rf ${OUTDIR}/* ; exit 1; }
-        [[ $SPECIES != "Escherichia coli" ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
+        [[ $SPECIES != *"Escherichia coli"* ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
     
     ##### Step 2: mlst #####
     mlstAnalysis
