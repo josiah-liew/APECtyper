@@ -19,15 +19,16 @@ DB_APEC="${DIR}/db/apec_refs.fa"          # APEC ref database location
 #--------------------------- Functions -----------------------------------
 
 function printUsage () {
-	printf "Usage: APECtyper.sh [OPTIONS] -i [FASTA] -o [DIR]\n"
+	printf "Usage: APECtyper.sh [OPTIONS] -f [FASTA] -o [DIR]\n"
 	printf "\t-h\t\tprint this usage message\n"
 	printf "\t-v\t\tprint the version\n"
 	printf "\t-r\t\tprint citation\n"
 	printf "\t-f\t\tFASTA contig file or directory containing multiple FASTA files\n"
 	printf "\t-o\t\toutput directory\n"
 	printf "\t-i\t\tminimum blast % identity [default: 90]\n"
-	printf "\t-i\t\tminimum blast % coverage [default: 90]\n"
-	printf "\t-s\t\tcombine reports from multiple samples into one file\n"
+	printf "\t-c\t\tminimum blast % coverage [default: 90]\n"
+	printf "\t-t\t\tnumber of threads to use [default: 1]\n"
+	printf "\t-s\t\tcombine reports from multiple samples into single tsv file\n"
 }
 
 function checkDependencies () {
