@@ -42,10 +42,10 @@ function checkDependency () {
 }
 
 function checkAllDependencies () {
-    checkDependencies ectyper
-    checkDependencies mlst
-    checkDependencies blastn
-    checkDependencies R
+    checkDependency ectyper
+    checkDependency mlst
+    checkDependency blastn
+    checkDependency R
 }
 
 function serotypeAnalysis () {
@@ -87,18 +87,12 @@ function cleanupOutdir () {
     rm -f $OUTDIR/makeblastdb.log
 }
 
-#------------------------------- Welcome ---------------------------------
-
-echo "============== Running APECtyper =================="
-echo $VERSION
-echo "Starting run on $DATE"
-
 #------------------------------- Options ---------------------------------
 
 # Set defaults
 THREADS=1            # default number of threads to use with mlst and BLAST
-PERC_IDENTITY=90     # default minimum blast % identity
-PERC_COVERAGE=90     # default minimum blast % coverage
+PERC_IDENTITY=90     # default minimum blast percent identity
+PERC_COVERAGE=90     # default minimum blast percent coverage
 SUMMARIZE='false'
 
 # Parse command options and arguments
@@ -114,8 +108,8 @@ while getopts 'vhrdf:o:i:c:t:s' flag; do
        exit 0 ;;
     f) INPUT=$OPTARG;;            # name of input FASTA file or directory (required)
     o) OUTDIR=$OPTARG;;           # name of output directory (required)
-    i) PERC_IDENTITY=$OPTARG;;    # minimum blast % identity (optional)
-    c) PERC_COVERAGE=$OPTARG;;    # minimum blast % coverage (optional)
+    i) PERC_IDENTITY=$OPTARG;;    # minimum blast percent identity (optional)
+    c) PERC_COVERAGE=$OPTARG;;    # minimum blast percent coverage (optional)
     t) THREADS=$OPTARG;;          # number of threads for running mlst and BLAST 
     s) SUMMARIZE='true'           # whether to summarize all sample results into a single output file
   esac
@@ -123,6 +117,12 @@ done
 
 # If no variables, print usage message and exit
 [[ $# == 0 ]] && { printUsage ; exit 1; }
+
+#------------------------------- Welcome ---------------------------------
+
+echo "============== Running APECtyper =================="
+echo $VERSION
+echo "Starting run on $DATE"
 
 #------------------------------- Checks ---------------------------------
 
