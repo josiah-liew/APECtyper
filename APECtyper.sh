@@ -26,8 +26,8 @@ function printUsage () {
 	printf "\t-d\t\tcheck for dependencies\n"
 	printf "\t-f\t\tFASTA contig file or directory containing multiple FASTA files\n"
 	printf "\t-o\t\toutput directory\n"
-	printf "\t-i\t\tminimum blast % identity [default: 90]\n"
-	printf "\t-c\t\tminimum blast % coverage [default: 90]\n"
+	printf "\t-i\t\tminimum blast percent identity [default: 90]\n"
+	printf "\t-c\t\tminimum blast percent coverage [default: 90]\n"
 	printf "\t-t\t\tnumber of threads to use [default: 1]\n"
 	printf "\t-s\t\tcombine reports from multiple samples into single TSV file\n"
 }
@@ -37,7 +37,7 @@ function checkDependency () {
     if [ -z "$PACKAGE" ]; then
         echo -e "\nError: dependency $1 could not be located.\n" && exit 1
         else
-        echo -e "\nFound "$1": $PACKAGE\n"
+        echo -e "Found "$1": $PACKAGE\n"
     fi
 }
 
@@ -56,7 +56,7 @@ function serotypeAnalysis () {
 
 function mlstAnalysis () {
     echo "Running mlst..."
-    mlst --scheme ecoli --quiet $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.csv
+    mlst --scheme ecoli --quiet $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.tsv
 }
 
 function makeBlastDB () {
