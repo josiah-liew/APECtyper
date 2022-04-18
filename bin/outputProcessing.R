@@ -63,18 +63,7 @@ blastFilterID <- subset(blast, "Coverage" >= 90 &
 markers <- unique(gsub("\\|.*", "", blastFilterID$Gene))
 
 #------------------------------------------
-# Check for presence of APEC plasmid
-
-if ("ompTp" %in% markers & "hlyF" %in% markers) {
-  plasmid <- "Present"
-  }else {
-    plasmid <- "Absent"
-    }
-
-paste0("APEC plasmid: ", plasmid)
-
-#------------------------------------------
-# Verify samples is E. coli and identify serotype
+# Verify sample is E. coli and identify serotype
 
 qc <- ectyper[1, "QC"]
 species <- ectyper[1, "Species"]
@@ -82,44 +71,55 @@ species <- ectyper[1, "Species"]
 if (grepl("Escherichia coli", species, fixed = TRUE, ignore.case = TRUE)) {
   serotype <- ectyper[1, "Serotype"]
   Otype <- ectyper[1, "O-type"]
-  }else {
-    serotype <- "NA"
-    Otype <- "NA"
-    }
+  paste0("Serotype: ", serotype)
   
-paste0("Serotype: ", serotype)
+  #------------------------------------------
+  # Check for presence of APEC plasmid
+  
+  if ("ompTp" %in% markers & "hlyF" %in% markers) {
+    plasmid <- "Present"
+  }else {
+    plasmid <- "Absent"
+  }
+  paste0("APEC plasmid: ", plasmid)
+  
+  #------------------------------------------
+  # Identify sequence type and check whether "high risk"
 
-#------------------------------------------
-# Identify sequence type
-
-if (!is.numeric(ST)){
-  highRiskST <- "Unknown ST"
+  if (!is.numeric(ST)){
+    highRiskST <- "Unknown ST"
   }else if (ST %in% c(131, 23, 428, 355)) {
     highRiskST <- "Yes"
-    }else if (O78 == "O78") {
-      highRiskST <- "Yes"
-      }else {
-        highRiskST <- "No"
-        }
+  }else if (Otype == "O78") {
+    highRiskST <- "Yes"
+  }else {
+    highRiskST <- "No"
+  }
+  paste0("High Risk ST: ", highRiskST)
+  
+  #------------------------------------------
+  # Assign pathotype
 
-paste0("High Risk ST: ", highRiskST)
-
-#------------------------------------------
-# Assign pathotype
-
-if (!is.numeric(ST)){
-  pathotype <- "Unknown ST - pathotype could not be determined."
+  if (!is.numeric(ST)){
+    pathotype <- "Unknown ST - pathotype could not be determined."
   }else if (plasmid == "Present" & highRiskST == "Yes"){
     pathotype <- "High Risk APEC"
-    }else if (plasmid == "Present" & highRiskST == "No"){
-      pathotype <- "APEC"
-      }else if (plasmid == "Absent" & highRiskST == "Yes"){
-        pathotype <- "High Risk non-APEC"
-        }else if (plasmid == "Absent" & highRiskST == "No"){
-          pathotype <- "non-APEC"
-          }
+  }else if (plasmid == "Present" & highRiskST == "No"){
+    pathotype <- "APEC"
+  }else if (plasmid == "Absent" & highRiskST == "Yes"){
+    pathotype <- "High Risk non-APEC"
+  }else if (plasmid == "Absent" & highRiskST == "No"){
+    pathotype <- "non-APEC"
+  }
+  paste0("Pathotype: ", pathotype)
 
-paste0("Pathotype: ", pathotype)
+# If sample is NOT E. coli...
+}else {
+    serotype <- "NA"
+    Otype <- "NA"
+    plasmid <- "NA"
+    pathotype <- "NA"
+}
 
 #------------------------------------------
 # Write results to tsv file
