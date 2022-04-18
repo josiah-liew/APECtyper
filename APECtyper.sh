@@ -29,7 +29,7 @@ function printUsage () {
 	printf "\t-i\t\tminimum blast % identity [default: 90]\n"
 	printf "\t-c\t\tminimum blast % coverage [default: 90]\n"
 	printf "\t-t\t\tnumber of threads to use [default: 1]\n"
-	printf "\t-s\t\tcombine reports from multiple samples into single tsv file\n"
+	printf "\t-s\t\tcombine reports from multiple samples into single TSV file\n"
 }
 
 function checkDependency () {
@@ -50,8 +50,8 @@ function checkAllDependencies () {
 
 function serotypeAnalysis () {
     echo "Running ECTyper..."
-    ectyper -i $FASTA -o ${OUTDIR}/serotype --cores $THREADS --verify --percentIdentityOtype 90 --percentIdentityHtype 95 --percentCoverageOtype 95 --percentCoverageHtype 50
-    SPECIES=$(awk -F'\t' 'NR!=1{print $2}' ${OUTDIR}/serotype/output.tsv)
+    ectyper -i $FASTA -o ${OUTDIR}/serotype/serotype_${NAME} --cores $THREADS --verify --percentIdentityOtype 90 --percentIdentityHtype 90 --percentCoverageOtype 80 --percentCoverageHtype 80
+    SPECIES=$(awk -F'\t' 'NR!=1{print $2}' ${OUTDIR}/serotype/serotype_${NAME}/output.tsv)
 }
 
 function mlstAnalysis () {
@@ -144,9 +144,9 @@ checkAllDependencies
 #---------------------------- Set-up ---------------------------------
 
 # Create mlst and BLAST output directories
+mkdir -p ${OUTDIR}/serotype
 mkdir -p ${OUTDIR}/mlst
 mkdir -p ${OUTDIR}/blast
-mkdir -p ${OUTDIR}/serotype
 
 # Build temp blast database
 makeBlastDB
@@ -182,7 +182,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     serotypeAnalysis
         # if non-zero exit status, print error, rm outdir contents, and exit
         [[ $? -ne 0 ]] && { echo "Error when running ECTyper." ; rm -rf ${OUTDIR}/* ; exit 1; }
-        [[ $SPECIES != *"Escherichia coli"* ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
+        # [[ $SPECIES != *"Escherichia coli"* ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
     
     ##### Step 2: mlst #####
     mlstAnalysis
