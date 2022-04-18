@@ -68,10 +68,9 @@ markers <- unique(gsub("\\|.*", "", blastFilterID$Gene))
 qc <- ectyper[1, "QC"]
 species <- ectyper[1, "Species"]
 
-if (grepl("Escherichia coli", species, fixed = TRUE, ignore.case = TRUE)) {
+if (grepl("Escherichia coli", species, ignore.case = TRUE)) {
   serotype <- ectyper[1, "Serotype"]
   Otype <- ectyper[1, "O.type"]
-  paste0("Serotype: ", serotype)
   
   #------------------------------------------
   # Check for presence of APEC plasmid
@@ -81,7 +80,6 @@ if (grepl("Escherichia coli", species, fixed = TRUE, ignore.case = TRUE)) {
   }else {
     plasmid <- "Absent"
   }
-  paste0("APEC plasmid: ", plasmid)
   
   #------------------------------------------
   # Identify sequence type and check whether "high risk"
@@ -95,7 +93,6 @@ if (grepl("Escherichia coli", species, fixed = TRUE, ignore.case = TRUE)) {
   }else {
     highRiskST <- "No"
   }
-  paste0("High Risk ST: ", highRiskST)
   
   #------------------------------------------
   # Assign pathotype
@@ -111,7 +108,6 @@ if (grepl("Escherichia coli", species, fixed = TRUE, ignore.case = TRUE)) {
   }else if (plasmid == "Absent" & highRiskST == "No"){
     pathotype <- "non-APEC"
   }
-  paste0("Pathotype: ", pathotype)
 
 # If sample is NOT E. coli...
 }else {
