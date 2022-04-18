@@ -50,8 +50,8 @@ function checkAllDependencies () {
 
 function serotypeAnalysis () {
     echo "Running ECTyper..."
-    ectyper -i $FASTA -o ${OUTDIR}/serotype/serotype_${NAME} --cores $THREADS --verify --percentIdentityOtype 90 --percentIdentityHtype 90 --percentCoverageOtype 80 --percentCoverageHtype 80
-    SPECIES=$(awk -F'\t' 'NR!=1{print $2}' ${OUTDIR}/serotype/serotype_${NAME}/output.tsv)
+    ectyper -i $FASTA -o ${OUTDIR}/serotype/serotype_${NAME} --cores $THREADS --verify --percentIdentityOtype 90 --percentIdentityHtype 90 --percentCoverageOtype 80 --percentCoverageHtype 80 > /dev/null 2>&1
+    # SPECIES=$(awk -F'\t' 'NR!=1{print $2}' ${OUTDIR}/serotype/serotype_${NAME}/output.tsv)
 }
 
 function mlstAnalysis () {
@@ -197,8 +197,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     ##### Step 4: Generate Report ##### 
     generateReport
         # if non-zero exit status, print error, rm outdir contents, and exit
-	# rm -rf ${OUTDIR}/* ; 
-        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -rf ${OUTDIR}/* ; exit 1; }
 
     ##### Step 5: Compile Reports (optional) ##### 
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
@@ -216,6 +215,6 @@ cleanupOutdir
 #------------------------- Good-bye -------------------------
 
 echo "============== APECtyper is complete =================="
-echo "Please cite: $CITATION"
+echo "Please cite: \n$CITATION"
 
 exit 0
