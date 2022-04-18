@@ -70,7 +70,7 @@ species <- ectyper[1, "Species"]
 
 if (grepl("Escherichia coli", species, fixed = TRUE, ignore.case = TRUE)) {
   serotype <- ectyper[1, "Serotype"]
-  Otype <- ectyper[1, "O-type"]
+  Otype <- ectyper[1, "O.type"]
   paste0("Serotype: ", serotype)
   
   #------------------------------------------
