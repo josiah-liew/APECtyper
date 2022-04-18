@@ -13,8 +13,8 @@
 VERSION="APECtyper v.1.0 (Apr. 2022)"     # current version: 1.0 (Apr. 2022)
 DIR=$( dirname "${BASH_SOURCE[0]}" )      # source directory
 DATE=$( date +%Y-%m-%d )                  # today's date
-CITATION="TBD"                            # APECtyper citation
 DB_APEC="${DIR}/db/apec_refs.fa"          # APEC ref database location
+CITATION="Johnson TJ, Miller EA, Flores-Figueroa C, Munoz-Aguayo J, Cardona C, Fransen K, Lighty M, Gonder E, Nezworski J, Haag A, Behl M, Kromm M, Wileman B, Studniski M, Strain E, McDermott P, Singer RS. Refining the definition of the avian pathogenic Escherichia coli (APEC) pathotype through inclusion of high-risk clonal groups."     # APECtyper citation
 
 #--------------------------- Functions -----------------------------------
 
@@ -91,7 +91,7 @@ function cleanupOutdir () {
 
 echo "============== Running APECtyper =================="
 echo $VERSION
-echo "Please cite: $CITATION"
+echo "Starting run on $DATE"
 
 #------------------------------- Options ---------------------------------
 
@@ -164,7 +164,7 @@ COUNT=$(cat ${OUTDIR}/contigFiles.tmp | wc -l)
 
 # Create empty summary files with headers (optional)
 if [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]]; then
-   echo -e "Sample\tST\tSerogroup\tAPEC.plasmid\tPathotype" > ${OUTDIR}/pathotype_results_summary.tsv
+   echo -e "Sample\tSpecies\tSerotype\tSerotypeQC\tST\tAPEC_plasmid\tPathotype" > ${OUTDIR}/pathotype_results_summary.tsv
    echo -e "Sample\tSequence\tGene\tGeneLength\tAlignmentLength\tMismatches\tGaps\tSequenceStart\tSequenceEnd\tGeneStart\tGeneEnd\tIdentity\tEvalue\tBitscore\tCoverage" >${OUTDIR}/blast_results_summary.tsv
 fi
 
