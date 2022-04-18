@@ -4,20 +4,21 @@
 
 # APECtyper
 
-*In silico* command line tool for typing Avian Pathogenic *Escherichia coli*
+*In silico* command line tool for typing Avian Pathogenic *Escherichia coli* (APEC)
  
 ## Description
 
-`APECtyper` is a Bash shell script that wraps several well-establised tools ([ECTyper](), [mlst], [BLAST+], and [R]) into a single pipeline to classify  
+`APECtyper` is a Bash shell script that wraps several well-establised tools into a single pipeline in order to classify Avian Pathogenic *Escherichia coli* (APEC) based on the revised APEC pathotyping scheme developed by [Johnson et al. *in prep*](). 
 
-This tool is the *in silico* version of the *in vitro* multiplex PCR assays developed by [Johnston et al. *in prep*]().
 
-## Requirements
+([ECTyper](), [mlst], [BLAST+], and [R]) 
+
+## Dependencies
 
 * [ECTyper](https://github.com/phac-nml/ecoli_serotyping)
 * [mlst](https://github.com/tseemann/mlst)
 * [NCBI BLAST+ blastn](https://www.ncbi.nlm.nih.gov/books/NBK569861/?report=reader&%2F%3Freport=reader)
-    * This should be installed as an mlst dependency 
+    * This should already be installed as an mlst dependency. 
 * [R](https://cran.r-project.org) version XXXXXXX or higher 
 
 ### Installing dependencies via [Conda](https://bioconda.github.io/user/install.html)
@@ -57,40 +58,95 @@ Ensure the desired APECtyper version is installed:
 
 ### Command Line Options
 
+```
 % ./APECtyper.sh
-Usage: APECtyper.sh [OPTIONS] -i [FASTA or DIR] -o [DIR]
-	-h		print this message
+Usage: APECtyper.sh [OPTIONS] -f [FASTA or DIR] -o [DIR]
+	-h		print this usage message
 	-v		print the version
-	-c		check SeqKit is in path
-	-i		fasta contigs file or directory containing multiple files
+	-r		print citation
+	-f		FASTA contig file or directory containing multiple FASTA files
 	-o		output directory
-  -r    prints citation
+        -i              minimum blast % identity [default: 90]
+	-c              minimum blast % coverage [default: 90]
+	-t              number of threads to use [default: 1]
+	-s              combine reports from multiple samples into single TSV file
 ```
 
 ### Example Usage
 
 Single FASTA file:
 ```
-% ./APECtyper.sh -i data/assemblies/BS448.fasta -o example_output
+% ./APECtyper.sh -f data/assemblies/sample1.fasta -o sample1_output
 ```
 
 Directory containing multiple FASTA files:
 ```
-% ./APECtyper.sh -i data/assemblies -o example_output
+% ./APECtyper.sh -f data/assemblies -o multisample_output
 ```
 
-### Output
+## Output
 
-Within the user-defined output directory, there will be XXXXXXXXX items:
+Within the user-defined output directory, there will be three directories – `serotype`, `mlst`, and `blast` – containing the individual output files from ECTyper, mlst, and blastn, respectively. There will also be two TSV files per sample: 
+
+* `pathotype_results_SAMPLE.tsv`: A tab-separated file summarizing the outputs from ECtyper and mlst, as well as the pathotype classification.
+* `blast_results_SAMPLE.tsv`: A tab-separated summary of the blastn results against the custom APEC virulence gene database. Note that the percent identity and percent coverage thresholds can be set by the user with the `-i` and `-c` flags.  
+
+If the `-s` flag is included when running `APECtyper.sh`, there will be two additional files that are compilations of all blast reports and all pathotype reports: `blast_results_summary.tsv` and `pathotype_results_summary.tsv`.
+
+The `pathotype_results_SAMPLE.tsv` file has the following columns:  
+
+Column | Example | Description
+-------|---------|------------
+Sample | `sample1` | Name of input assembly file with file extension removed
+Species | `Escherichia coli` | Species identified by ECTyper
+Serotype | `O25:H4` | Serotype identified by ECTyper
+SerotypeQC | `PASS (REPORTABLE)` | QC message produced by ECTyper (See [ECTyper page](https://github.com/phac-nml/ecoli_serotyping#quality-control-qc-module) for a description of all possible QC codes) 
+ST | `131` | Sequence type identified by mlst
+APEC_plasmid | `Present` | Whether or not APEC plasmid markers *hlyF* and *ompT* were found
+Pathotype | `High Risk APEC` | Pathotype classification (possible values include `High Risk APEC`, `APEC`, `High Risk non-APEC`, `non-APEC`, or `Not E. coli`)
+
+The `blast_results_SAMPLE.tsv` file has the following columns:
+
+Column | Example | Description
+-------|---------|------------
+Sample | `sample1` | Name of input assembly file with file extension removed
 
 
 
-## Citation
+
+
+
+
+
+
+
+
+
+
+
+## Citations
 
 ```
 ./APECtyper.sh -r
 ```
+
 If you use APECtyper in your work, please cite:  
+
+
+
+
+
+
+Please also cite:
+
+* ECtyper
+* mlst
+
+
+
+
+
+
 
 
 
