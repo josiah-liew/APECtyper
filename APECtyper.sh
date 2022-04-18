@@ -215,6 +215,6 @@ cleanupOutdir
 #------------------------- Good-bye -------------------------
 
 echo "============== APECtyper is complete =================="
-echo "Please cite: \n$CITATION"
+echo -e "Please cite: \n$CITATION"
 
 exit 0
