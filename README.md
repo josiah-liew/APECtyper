@@ -53,23 +53,24 @@ Ensure the desired APECtyper version is installed:
 
 ### Input Requirements
 
-* assembly in FASTA format or directory containing multiple assemblies in FASTA format; assemblies can be in multiple contigs
-* directory to output the results into
+* assembly in FASTA format or directory containing multiple assemblies in FASTA format (can be multiple contigs)
+* directory to output the results
 
 ### Command Line Options
 
 ```
 % ./APECtyper.sh
 Usage: APECtyper.sh [OPTIONS] -f [FASTA or DIR] -o [DIR]
-	-h		print this usage message
-	-v		print the version
-	-r		print citation
-	-f		FASTA contig file or directory containing multiple FASTA files
-	-o		output directory
-        -i              minimum blast % identity [default: 90]
-	-c              minimum blast % coverage [default: 90]
-	-t              number of threads to use [default: 1]
-	-s              combine reports from multiple samples into single TSV file
+	-h	print this usage message
+	-v	print the version
+	-r	print citation
+	-d	check for dependencies
+	-f	FASTA contig file or directory containing multiple FASTA files
+	-o	output directory
+        -i      minimum blast % identity [default: 90]
+	-c      minimum blast % coverage [default: 90]
+	-t      number of threads to use [default: 1]
+	-s      combine reports from multiple samples into single TSV file
 ```
 
 ### Example Usage
