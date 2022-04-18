@@ -118,7 +118,7 @@ if (grepl("Escherichia coli", species, fixed = TRUE, ignore.case = TRUE)) {
     serotype <- "NA"
     Otype <- "NA"
     plasmid <- "NA"
-    pathotype <- "NA"
+    pathotype <- "Not E. coli"
 }
 
 #------------------------------------------
