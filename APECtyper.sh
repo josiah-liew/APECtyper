@@ -35,9 +35,9 @@ function printUsage () {
 function checkDependency () {
     PACKAGE=$(command -v $1)
     if [ -z "$PACKAGE" ]; then
-        echo -e "\nError: dependency $1 could not be located.\n" && exit 1
+        echo -e "Error: dependency $1 could not be located." && exit 1
         else
-        echo -e "Found "$1": $PACKAGE\n"
+        echo -e "Found "$1": $PACKAGE"
     fi
 }
 
@@ -197,7 +197,8 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     ##### Step 4: Generate Report ##### 
     generateReport
         # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -rf ${OUTDIR}/* ; exit 1; }
+	# rm -rf ${OUTDIR}/* ; 
+        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; exit 1; }
 
     ##### Step 5: Compile Reports (optional) ##### 
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
