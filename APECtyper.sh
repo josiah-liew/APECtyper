@@ -84,7 +84,7 @@ function cleanupOutdir () {
     echo "Cleaning up..."
     rm -f $OUTDIR/*.tmp
     rm -f $OUTDIR/apec_refs.fa*
-    rm -f $OUTDIR/makeblastdb.log
+    rm -f $OUTDIR/makeblastdb.*
 }
 
 #------------------------------- Options ---------------------------------
