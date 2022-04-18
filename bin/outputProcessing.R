@@ -11,7 +11,7 @@ ident <- as.numeric(args[4])
 
 #------------------------------------------
 # Load ECTyper results tsv file
-ectyper <- read.table(paste0(out, "/serotype/output.tsv"),
+ectyper <- read.table(paste0(out, "/serotype/serotype_", name, "/output.tsv"),
                  header = TRUE, sep = "\t"
                  )
 
@@ -52,7 +52,7 @@ write.table(blastFilterAll, file = paste0(out, "/blast_results_", name, ".tsv"),
           sep = "\t", row.names = FALSE, quote = FALSE)
 
 #------------------------------------------
-# Identify APEC markers and define APEC pathotype
+# Identify APEC pathotype markers
 
 blastFilterID <- subset(blast, "Coverage" >= 90 & 
                              "Identity" >= 90 & 
@@ -62,6 +62,9 @@ blastFilterID <- subset(blast, "Coverage" >= 90 &
 
 markers <- unique(gsub("\\|.*", "", blastFilterID$Gene))
 
+#------------------------------------------
+# Check for presence of APEC plasmid
+
 if ("ompTp" %in% markers & "hlyF" %in% markers) {
   plasmid <- "Present"
   }else {
@@ -70,16 +73,24 @@ if ("ompTp" %in% markers & "hlyF" %in% markers) {
 
 paste0("APEC plasmid: ", plasmid)
 
-serotype <- ectyper[1, "Serotype"]
-Otype <- ectyper[1, "O-type"]
+#------------------------------------------
+# Verify samples is E. coli and identify serotype
 
-if ("O78" == Otype) {
-  O78 <- "O78"
+qc <- ectyper[1, "QC"]
+species <- ectyper[1, "Species"]
+
+if (grepl("Escherichia coli", species, fixed = TRUE, ignore.case = TRUE)) {
+  serotype <- ectyper[1, "Serotype"]
+  Otype <- ectyper[1, "O-type"]
   }else {
-    O78 <- "Not O78"
+    serotype <- "NA"
+    Otype <- "NA"
     }
-
+  
 paste0("Serotype: ", serotype)
+
+#------------------------------------------
+# Identify sequence type
 
 if (!is.numeric(ST)){
   highRiskST <- "Unknown ST"
@@ -92,6 +103,9 @@ if (!is.numeric(ST)){
         }
 
 paste0("High Risk ST: ", highRiskST)
+
+#------------------------------------------
+# Assign pathotype
 
 if (!is.numeric(ST)){
   pathotype <- "Unknown ST - pathotype could not be determined."
@@ -107,7 +121,13 @@ if (!is.numeric(ST)){
 
 paste0("Pathotype: ", pathotype)
 
-df <- data.frame(Sample = name, "ST" = ST, "Serotype" = serotype, "APEC_plasmid" = plasmid, "Pathotype" = pathotype)
+#------------------------------------------
+# Write results to tsv file
+
+df <- data.frame("Sample" = name, "Species" = species,
+                 "Serotype" = serotype, "SerotypeQC" = qc,
+                 "ST" = ST, 
+                 "APEC_plasmid" = plasmid, "Pathotype" = pathotype)
 
 write.table(df, file = paste0(out, "/pathotype_results_", name, ".tsv"),
           sep = "\t", row.names = FALSE, quote = FALSE)
