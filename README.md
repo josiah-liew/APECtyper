@@ -22,7 +22,7 @@
 ### Installing dependencies via [Conda](https://bioconda.github.io/user/install.html)
 
 ```
-conda install -c bioconda -c r ectyper mlst r
+conda install -c conda-forge -c bioconda -c defaults r-base mlst=2.19.0 ectyper=1.0.0
 ```
 
 ## Installation
@@ -113,7 +113,7 @@ The `blast_results_[SAMPLE].tsv` file has the following columns:
 Column | Example | Description
 -------|---------|------------
 Sequence | `contig00218` | Name of input assembly or specific assembly contig 
-Gene | `papC|Pap_pili|CP000468.1` | APEC virulence gene name
+Gene | <code>papC&#124;Pap_pili&#124;CP000468.1</code> | APEC virulence gene name
 GeneLength | `2520` | Length of gene (in bp)
 AlignmentLength | `2520` | Length of sequence overlap (in bp)
 Mismatches | `1` | Number of mismatches in the alignment
