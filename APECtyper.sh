@@ -50,7 +50,7 @@ function checkAllDependencies () {
 
 function serotypeAnalysis () {
     echo "Running ECTyper..."
-    ectyper -i $FASTA -o ${OUTDIR}/serotype/serotype_${NAME} --cores $THREADS --verify --percentIdentityOtype 90 --percentIdentityHtype 90 --percentCoverageOtype 80 --percentCoverageHtype 80 > /dev/null 2>&1
+    ectyper -i $FASTA -o ${OUTDIR}/serotype/serotype_${NAME} --cores $THREADS --verify --percentIdentityOtype 90 --percentIdentityHtype 90 --percentCoverageOtype 70 --percentCoverageHtype 70 > /dev/null 2>&1
     # SPECIES=$(awk -F'\t' 'NR!=1{print $2}' ${OUTDIR}/serotype/serotype_${NAME}/output.tsv)
 }
 
