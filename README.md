@@ -15,8 +15,8 @@
 
 ## Dependencies
 
-* [ECTyper](https://github.com/phac-nml/ecoli_serotyping) version 1.0.0
-* [mlst](https://github.com/tseemann/mlst) version 2.19.0
+* [ECTyper](https://github.com/phac-nml/ecoli_serotyping) v1.0.0
+* [mlst](https://github.com/tseemann/mlst) v2.19.0
 * [NCBI BLAST+ blastn](https://www.ncbi.nlm.nih.gov/books/NBK569861/?report=reader&%2F%3Freport=reader)
     * This should already be installed as an mlst dependency. 
 * [R](https://cran.r-project.org)
