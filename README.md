@@ -49,6 +49,12 @@ Ensure the desired APECtyper version is installed:
 ./APECtyper.sh -v
 ```
 
+Check that dependencies are installed in your path:
+
+```
+./APECtyper.sh -d
+```
+
 ## Usage
 
 ### Input Requirements
