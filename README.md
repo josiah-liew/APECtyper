@@ -8,9 +8,7 @@
  
 ## Description
 
-`APECtyper` is a Bash shell script that classifies Avian Pathogenic *Escherichia coli* (APEC) based on the revised APEC pathotyping scheme developed by [Johnson et al. *in prep*](). Preassembled partial or complete genome assemblies are run through two *E. coli* typing tools (namely, [ECTyper](https://github.com/phac-nml/ecoli_serotyping) and [mlst](https://github.com/tseemann/mlst)) and a report is generated summarizing the results of both programs along with the APEC pathotype classification.  
-
-`APECtyper` also screens input assemblies for 46 APEC virulence genes compiled in a [custom APEC database](https://github.com/JohnsonSingerLab/APEC_VF_database) and generates a summary report.
+`APECtyper` is a Bash shell script that classifies Avian Pathogenic *Escherichia coli* (APEC) based on the revised APEC pathotyping scheme developed by [Johnson et al. *in prep*](). Preassembled partial or complete genome assemblies are run through two *E. coli* typing tools (namely, [ECTyper](https://github.com/phac-nml/ecoli_serotyping) and [mlst](https://github.com/tseemann/mlst)) and a report is generated summarizing the results of both programs along with the APEC pathotype classification. `APECtyper` also screens input assemblies for 46 APEC virulence genes compiled in a [custom APEC database](https://github.com/JohnsonSingerLab/APEC_VF_database) and generates a summary report.
  
 
 ## Dependencies
@@ -29,16 +27,10 @@ conda install -c bioconda -c r ectyper mlst r
 
 ## Installation
 
-This will install the latest version directly from GitHub:
+Install the latest version directly from GitHub:
 
 ```
 git clone https://github.com/JohnsonSingerLab/APECtyper.git
-```
-
-Change permissions to make `APECtyper.sh` executable:
-```
-cd APECtyper
-chmod +x APECtyper.sh
 ```
 
 ### Check Installation
