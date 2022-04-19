@@ -100,6 +100,8 @@ Within the user-defined output directory, there will be three directories – `s
 
 If the `-s` flag is included when running `APECtyper.sh`, two additional files will be generated that are compilations of all blast reports and all pathotype reports: `blast_results_summary.tsv` and `pathotype_results_summary.tsv`.  
 
+### Pathotype output
+
 The `pathotype_results_[SAMPLE].tsv` file has the following columns:  
 
 Column | Example | Description
@@ -111,6 +113,8 @@ SerotypeQC | `PASS (REPORTABLE)` | QC message produced by ECTyper (See [ECTyper 
 ST | `131` | Sequence type identified by mlst
 APEC_plasmid | `Present` | Whether or not APEC plasmid markers *hlyF* and *ompT* were found
 Pathotype | `High Risk APEC` | Pathotype classification (possible values include `High Risk APEC`, `APEC`, `High Risk non-APEC`, `non-APEC`, or `Not E. coli`)
+
+### APEC virulence gene output
 
 The `blast_results_[SAMPLE].tsv` file has the following columns:
 
