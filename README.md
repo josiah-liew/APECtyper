@@ -15,11 +15,11 @@
 
 ## Dependencies
 
-* [ECTyper](https://github.com/phac-nml/ecoli_serotyping)
-* [mlst](https://github.com/tseemann/mlst)
+* [ECTyper](https://github.com/phac-nml/ecoli_serotyping) version 1.0.0
+* [mlst](https://github.com/tseemann/mlst) version 2.19.0
 * [NCBI BLAST+ blastn](https://www.ncbi.nlm.nih.gov/books/NBK569861/?report=reader&%2F%3Freport=reader)
     * This should already be installed as an mlst dependency. 
-* [R](https://cran.r-project.org) version XXXXXXX or higher 
+* [R](https://cran.r-project.org)
 
 ### Installing dependencies via [Conda](https://bioconda.github.io/user/install.html)
 
@@ -43,7 +43,7 @@ chmod +x APECtyper.sh
 
 ### Check Installation
 
-Ensure the desired APECtyper version is installed:
+Check APECtyper version:
 
 ```
 ./APECtyper.sh -v
@@ -139,7 +139,7 @@ Coverage | `100` | Percent coverage of the gene ( (AlignmentLength - Gaps) / Gen
 
 If you use APECtyper in your work, please cite:  
 
-Johnson TJ, Miller EA, Flores-Figueroa C, Munoz-Aguayo J, Cardona C, Fransen K, Lighty M, Gonder E, Nezworski J, Haag A, Behl M, Kromm M, Wileman B, Studniski M, Strain E, McDermott P, Singer RS. Refining the definition of the avian pathogenic *Escherichia coli* (APEC) pathotype through inclusion of high-risk clonal groups.  
+* Johnson TJ, Miller EA, Flores-Figueroa C, Munoz-Aguayo J, Cardona C, Fransen K, Lighty M, Gonder E, Nezworski J, Haag A, Behl M, Kromm M, Wileman B, Studniski M, Strain E, McDermott P, Singer RS. Refining the definition of the avian pathogenic *Escherichia coli* (APEC) pathotype through inclusion of high-risk clonal groups.  
 
 Please also cite:
 
