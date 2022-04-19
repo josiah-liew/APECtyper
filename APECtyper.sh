@@ -14,22 +14,22 @@ VERSION="APECtyper v.1.0 (Apr. 2022)"     # current version: 1.0 (Apr. 2022)
 DIR=$( dirname "${BASH_SOURCE[0]}" )      # source directory
 DATE=$( date +%Y-%m-%d )                  # today's date
 DB_APEC="${DIR}/db/apec_refs.fa"          # APEC ref database location
-CITATION="Johnson TJ, Miller EA, Flores-Figueroa C, Munoz-Aguayo J, Cardona C, Fransen K, Lighty M, Gonder E, Nezworski J, Haag A, Behl M, Kromm M, Wileman B, Studniski M, Strain E, McDermott P, Singer RS. Refining the definition of the avian pathogenic Escherichia coli (APEC) pathotype through inclusion of high-risk clonal groups."     # APECtyper citation
+CITATION="Johnson TJ, Miller EA, Flores-Figueroa C, Munoz-Aguayo J, Cardona C, Fransen K, Lighty M, Gonder E, Nezworski J, Haag A, Behl M, Kromm M, Wileman B, Studniski M, Strain E, McDermott P, Singer RS. Refining the definition of the avian pathogenic Escherichia coli (APEC) pathotype through inclusion of high-risk clonal groups."    # APECtyper citation
 
 #--------------------------- Functions -----------------------------------
 
 function printUsage () {
 	printf "Usage: APECtyper.sh [OPTIONS] -f [FASTA] -o [DIR]\n"
-	printf "\t-h\t\tprint this usage message\n"
-	printf "\t-v\t\tprint the version\n"
-	printf "\t-r\t\tprint citation\n"
-	printf "\t-d\t\tcheck for dependencies\n"
-	printf "\t-f\t\tFASTA contig file or directory containing multiple FASTA files\n"
-	printf "\t-o\t\toutput directory\n"
-	printf "\t-i\t\tminimum blast percent identity [default: 90]\n"
-	printf "\t-c\t\tminimum blast percent coverage [default: 90]\n"
-	printf "\t-t\t\tnumber of threads to use [default: 1]\n"
-	printf "\t-s\t\tcombine reports from multiple samples into single TSV file\n"
+	printf "\t-h\tprint this usage message\n"
+	printf "\t-v\tprint the version\n"
+	printf "\t-r\tprint citation\n"
+	printf "\t-d\tcheck for dependencies\n"
+	printf "\t-f\tFASTA contig file or directory containing multiple FASTA files\n"
+	printf "\t-o\toutput directory\n"
+	printf "\t-i\tminimum blast percent identity [default: 90]\n"
+	printf "\t-c\tminimum blast percent coverage [default: 90]\n"
+	printf "\t-t\tnumber of threads to use [default: 1]\n"
+	printf "\t-s\tcombine reports from multiple samples into single TSV file\n"
 }
 
 function checkDependency () {
@@ -202,7 +202,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     ##### Step 5: Compile Reports (optional) ##### 
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
     
-    echo "Analysis of ${NAME} is complete." 
+    echo -e "Analysis of ${NAME} is complete.\n" 
 
 done
     
