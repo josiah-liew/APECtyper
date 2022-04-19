@@ -83,12 +83,12 @@ Usage: APECtyper.sh [OPTIONS] -f [FASTA or DIR] -o [DIR]
 
 Input is a single FASTA file:
 ```
-% ./APECtyper.sh -f data/assemblies/sample1.fasta -o sample1_output
+./APECtyper.sh -f data/assemblies/sample1.fasta -o sample1_output
 ```
 
 Input is a directory containing multiple FASTA files:
 ```
-% ./APECtyper.sh -f data/assemblies -o multisample_output
+./APECtyper.sh -f data/assemblies -o multisample_output
 ```
 
 ## Output
