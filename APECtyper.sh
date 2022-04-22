@@ -55,7 +55,7 @@ function serotypeAnalysis () {
 
 function mlstAnalysis () {
     echo "Running mlst..."
-    mlst --scheme ecoli $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.tsv 2> $OUTDIR/mlst/mlst.err
+    mlst --scheme ecoli $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.tsv 2> $OUTDIR/mlst/mlst.log
 }
 
 function makeBlastDB () {
@@ -66,12 +66,12 @@ function makeBlastDB () {
 
 function blastAnalysis () {
     echo "Running BLASTn..."
-    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_threads $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv 2> $OUTDIR/blast/blastn.err
+    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_threads $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv 2> $OUTDIR/blast/blastn.log
 }
 
 function generateReport () {
    echo "Generating report..."
-   Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY" 2> $OUTDIR/report.err
+   Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY" 2> $OUTDIR/report.log
 }
 
 function compileReports () {
@@ -83,7 +83,6 @@ function cleanupOutdir () {
     echo "Cleaning up..."
     rm -f $OUTDIR/*.tmp
     rm -f $OUTDIR/apec_refs.fa*
-    rm -f $OUTDIR/makeblastdb.*
 }
 
 #------------------------------- Options ---------------------------------
@@ -186,17 +185,17 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     ##### Step 2: mlst #####
     mlstAnalysis
         # if non-zero exit status, print error and exit
-        [[ $? -ne 0 ]] && { echo "Error when running mlst. See mlst/mlst.err for more details." ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running mlst. See mlst/mlst.log for more details." ; exit 1; }
     
     ##### Step 3: BLAST ##### 
     blastAnalysis
         # if non-zero exit status, print error and exit
-        [[ $? -ne 0 ]] && { echo "Error when running blastn. See blast/blastn.err for more details." ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running blastn. See blast/blastn.log for more details." ; exit 1; }
 
     ##### Step 4: Generate Report ##### 
     generateReport
         # if non-zero exit status, print error and exit
-        [[ $? -ne 0 ]] && { echo "Error when generating report in R. See report.err for more details." ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when generating report in R. See report.log for more details." ; exit 1; }
 
     ##### Step 5: Compile Reports (optional) ##### 
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
