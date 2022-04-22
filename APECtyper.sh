@@ -56,23 +56,23 @@ function serotypeAnalysis () {
 
 function mlstAnalysis () {
     echo "Running mlst..."
-    mlst --scheme ecoli --quiet $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.tsv
+    mlst --scheme ecoli $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.tsv > $OUTDIR/mlst/mlst.log 2>&1
 }
 
 function makeBlastDB () {
     echo "Making BLASTn database..."
     cp $DIR/db/apec_refs.fa $OUTDIR
-    makeblastdb -in $OUTDIR/apec_refs.fa -dbtype nucl -title "APEC Ref Seqs" -logfile $OUTDIR/makeblastdb.log
+    makeblastdb -in $OUTDIR/apec_refs.fa -dbtype nucl -title "APEC Ref Seqs" -logfile $OUTDIR/blast/makeblastdb.log 
 }
 
 function blastAnalysis () {
     echo "Running BLASTn..."
-    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_threads $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv
+    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_threads $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv > $OUTDIR/blast/blastn.err 2>&1
 }
 
 function generateReport () {
    echo "Generating report..."
-   Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY"
+   Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY" > report.log 2>&1
 }
 
 function compileReports () {
@@ -150,8 +150,8 @@ mkdir -p ${OUTDIR}/blast
 
 # Build temp blast database
 makeBlastDB
-        # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when running makeblastdb." ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when running makeblastdb. See makeblastdb.log for more details." ; exit 1; }
     
 # Generate list of input FASTA files
 if [[ -f "$INPUT" ]]; then
@@ -180,24 +180,24 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     
     ##### STEP 1: ECTyper #####
     serotypeAnalysis
-        # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when running ECTyper. See ectyper.log for more details." ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when running ECTyper. See serotype/ectyper.log for more details." ; exit 1; }
         # [[ $SPECIES != *"Escherichia coli"* ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
     
     ##### Step 2: mlst #####
     mlstAnalysis
-        # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when running mlst." ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when running mlst. See mlst/mlst.log for more details." ; exit 1; }
     
     ##### Step 3: BLAST ##### 
     blastAnalysis
-        # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when running blastn. See blast/blastn.err for more details." ; exit 1; }
 
     ##### Step 4: Generate Report ##### 
     generateReport
-        # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; exit 1; }
+        # if non-zero exit status, print error and exit
+        [[ $? -ne 0 ]] && { echo "Error when generating report in R. See report.log for more details." ; exit 1; }
 
     ##### Step 5: Compile Reports (optional) ##### 
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
