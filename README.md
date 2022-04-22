@@ -19,12 +19,6 @@
     * This should already be installed as an mlst dependency. 
 * [R](https://cran.r-project.org)
 
-### Installing dependencies via [Conda](https://bioconda.github.io/user/install.html)
-
-```
-conda install -c conda-forge -c bioconda -c defaults r-base mlst=2.19.0 ectyper=1.0.0
-```
-
 ## Installation
 
 Install the latest version directly from GitHub:
