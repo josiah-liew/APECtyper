@@ -72,7 +72,7 @@ function blastAnalysis () {
 
 function generateReport () {
    echo "Generating report..."
-   Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY" 2> $OUTDIR/report.log
+   Rscript "$DIR/bin/outputProcessing.R" "$NAME" "$OUTDIR" "$PERC_COVERAGE" "$PERC_IDENTITY"
 }
 
 function compileReports () {
