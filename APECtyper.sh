@@ -51,12 +51,11 @@ function checkAllDependencies () {
 function serotypeAnalysis () {
     echo "Running ECTyper..."
     ectyper -i $FASTA -o ${OUTDIR}/serotype/serotype_${NAME} --cores $THREADS --verify --percentIdentityOtype 90 --percentIdentityHtype 90 --percentCoverageOtype 70 --percentCoverageHtype 70 > /dev/null 2>&1
-    # SPECIES=$(awk -F'\t' 'NR!=1{print $2}' ${OUTDIR}/serotype/serotype_${NAME}/output.tsv)
 }
 
 function mlstAnalysis () {
     echo "Running mlst..."
-    mlst --scheme ecoli $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.tsv > $OUTDIR/mlst/mlst.log 2>&1
+    mlst --scheme ecoli $FASTA --label $NAME --threads $THREADS > ${OUTDIR}/mlst/mlst_results_${NAME}.tsv 2> $OUTDIR/mlst/mlst.err
 }
 
 function makeBlastDB () {
@@ -67,7 +66,7 @@ function makeBlastDB () {
 
 function blastAnalysis () {
     echo "Running BLASTn..."
-    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_threads $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv > $OUTDIR/blast/blastn.err 2>&1
+    blastn -query $FASTA -db $OUTDIR/apec_refs.fa -num_threads $THREADS -outfmt "6 qseqid sseqid slen length mismatch gaps qstart qend sstart send pident evalue bitscore" -out ${OUTDIR}/blast/blast_results_${NAME}.tsv 2> $OUTDIR/blast/blastn.err
 }
 
 function generateReport () {
@@ -187,7 +186,7 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     ##### Step 2: mlst #####
     mlstAnalysis
         # if non-zero exit status, print error and exit
-        [[ $? -ne 0 ]] && { echo "Error when running mlst. See mlst/mlst.log for more details." ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running mlst. See mlst/mlst.err for more details." ; exit 1; }
     
     ##### Step 3: BLAST ##### 
     blastAnalysis
