@@ -89,6 +89,7 @@ Within the user-defined output directory, there will be three directories – `s
 
 * `pathotype_results_[SAMPLE].tsv`: A tab-separated file summarizing the outputs from ECtyper and mlst, as well as the pathotype classification.
 * `blast_results_[SAMPLE].tsv`: A tab-separated summary of the blastn results against the custom APEC virulence gene database. 
+* `report.log`: A log file for summary report generation.
 
 If the `-s` flag is included when running `APECtyper.sh`, two additional files will be generated that are compilations of all blast reports and all pathotype reports: `blast_results_summary.tsv` and `pathotype_results_summary.tsv`.  
 
