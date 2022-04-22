@@ -138,12 +138,12 @@ echo "Starting run on $DATE"
 # Check for dependencies 
 checkAllDependencies
 
-# Check that output directory exists, create if does not exist
-[[ ! -d "$OUTDIR" ]] && { mkdir "$OUTDIR" ; }
+# Check that output directory does not already exist
+[[ -d "$OUTDIR" ]] && { echo "Error: Output directory already exists." ; exit 1; }
 
 #---------------------------- Set-up ---------------------------------
 
-# Create mlst and BLAST output directories
+# Create serotype, mlst, and BLAST output directories
 mkdir -p ${OUTDIR}/serotype
 mkdir -p ${OUTDIR}/mlst
 mkdir -p ${OUTDIR}/blast
@@ -151,7 +151,7 @@ mkdir -p ${OUTDIR}/blast
 # Build temp blast database
 makeBlastDB
         # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when running makeblastdb." ; rm -rf ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running makeblastdb." ; exit 1; }
     
 # Generate list of input FASTA files
 if [[ -f "$INPUT" ]]; then
@@ -181,23 +181,23 @@ for FASTA in $(cat ${OUTDIR}/contigFiles.tmp); do
     ##### STEP 1: ECTyper #####
     serotypeAnalysis
         # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when running ECTyper." ; rm -rf ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running ECTyper. See ectyper.log for more details." ; exit 1; }
         # [[ $SPECIES != *"Escherichia coli"* ]] && { echo "Error: Isolate is not E. coli. Skipping..." ; continue; }
     
     ##### Step 2: mlst #####
     mlstAnalysis
         # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when running mlst." ; rm -rf ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running mlst." ; exit 1; }
     
     ##### Step 3: BLAST ##### 
     blastAnalysis
         # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; rm -rf ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when running BLAST." ; exit 1; }
 
     ##### Step 4: Generate Report ##### 
     generateReport
         # if non-zero exit status, print error, rm outdir contents, and exit
-        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; rm -rf ${OUTDIR}/* ; exit 1; }
+        [[ $? -ne 0 ]] && { echo "Error when generating report in R." ; exit 1; }
 
     ##### Step 5: Compile Reports (optional) ##### 
     [[ "$SUMMARIZE" == 'true' ]] && [[ $COUNT -gt 1 ]] && compileReports
