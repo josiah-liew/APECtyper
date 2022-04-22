@@ -52,7 +52,7 @@ Check that dependencies are installed in your path:
 ### Input Requirements
 
 * assembly in FASTA format or directory containing multiple assemblies in FASTA format (can be multiple contigs)
-* directory to output the results
+* directory name to output the results (to be created during run)
 
 ### Command Line Options
 
