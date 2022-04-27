@@ -90,6 +90,8 @@ if (grepl("Escherichia coli", species, ignore.case = TRUE)) {
     highRiskST <- "Yes"
   }else if (Otype == "O78") {
     highRiskST <- "Yes"
+  }else if (Otype == "-") {
+    highRiskST <- "Unknown"  
   }else {
     highRiskST <- "No"
   }
@@ -103,10 +105,14 @@ if (grepl("Escherichia coli", species, ignore.case = TRUE)) {
     pathotype <- "High Risk APEC"
   }else if (plasmid == "Present" & highRiskST == "No"){
     pathotype <- "APEC"
+  }else if (plasmid == "Present" & highRiskST == "Unknown"){
+    pathotype <- "APEC - unknown if high risk APEC as O antigen typing failed"
   }else if (plasmid == "Absent" & highRiskST == "Yes"){
     pathotype <- "High Risk non-APEC"
   }else if (plasmid == "Absent" & highRiskST == "No"){
     pathotype <- "non-APEC"
+  }else if (plasmid == "Absent" & highRiskST == "Unknown"){
+    pathotype <- "non-APEC - unknown if high risk non-APEC as O antigen typing failed"
   }
 
 # If sample is NOT E. coli...
