@@ -15,6 +15,9 @@ ectyper <- read.table(paste0(out, "/serotype/serotype_", name, "/output.tsv"),
                  header = TRUE, sep = "\t"
                  )
 
+qc <- ectyper[1, "QC"]
+species <- ectyper[1, "Species"]
+
 #------------------------------------------
 # Load mlst results tsv file
 
@@ -23,8 +26,6 @@ mlst <- read.table(paste0(out, "/mlst/mlst_results_", name, ".tsv"),
                  col.names = c("name", "scheme", "ST", "adk", "fumC", 
                                "gyrB", "icd", "mdh", "purA", "recA")
                  )
-
-ST <- mlst[, "ST"]
 
 #------------------------------------------
 # Load BLAST results tsv file
@@ -65,12 +66,10 @@ markers <- unique(gsub("\\|.*", "", blastFilterID$Gene))
 #------------------------------------------
 # Verify sample is E. coli and identify serotype
 
-qc <- ectyper[1, "QC"]
-species <- ectyper[1, "Species"]
-
 if (grepl("Escherichia coli", species, ignore.case = TRUE)) {
   serotype <- ectyper[1, "Serotype"]
   Otype <- ectyper[1, "O.type"]
+  ST <- mlst[, "ST"]
   
   #------------------------------------------
   # Check for presence of APEC plasmid
@@ -82,45 +81,56 @@ if (grepl("Escherichia coli", species, ignore.case = TRUE)) {
   }
   
   #------------------------------------------
-  # Identify sequence type and check whether "high risk"
-
-  if (!is.numeric(ST)){
-    highRiskST <- "Unknown ST"
-  }else if (ST %in% c(131, 23, 428, 355)) {
-    highRiskST <- "Yes"
-  }else if (Otype == "O78") {
-    highRiskST <- "Yes"
-  }else if (Otype == "-") {
-    highRiskST <- "Unknown"  
-  }else {
-    highRiskST <- "No"
+  # Check whether "high risk"
+  
+  if (Otype == "O78" || ST %in% c(131, 23, 428, 355)) {
+    highRisk <- "Yes"
+  }else if (Otype == "-" && !is.numeric(ST)) {
+    highRisk <- "UnknownSTO"
+  }else if (Otype == "-" && is.numeric(ST) {
+    highRisk <- "UnknownO"
+  }else if (!is.numeric(ST)) {
+    highRisk <- "UnknownST"
+  }else if (is.numeric(ST) {
+    highRisk <- "No"
   }
   
   #------------------------------------------
   # Assign pathotype
 
-  if (!is.numeric(ST)){
-    pathotype <- "Unknown ST - pathotype could not be determined."
-  }else if (plasmid == "Present" & highRiskST == "Yes"){
-    pathotype <- "High Risk APEC"
-  }else if (plasmid == "Present" & highRiskST == "No"){
-    pathotype <- "APEC"
-  }else if (plasmid == "Present" & highRiskST == "Unknown"){
-    pathotype <- "APEC - unknown if high risk APEC as O antigen typing failed"
-  }else if (plasmid == "Absent" & highRiskST == "Yes"){
-    pathotype <- "High Risk non-APEC"
-  }else if (plasmid == "Absent" & highRiskST == "No"){
-    pathotype <- "non-APEC"
-  }else if (plasmid == "Absent" & highRiskST == "Unknown"){
-    pathotype <- "non-APEC - unknown if high risk non-APEC as O antigen typing failed"
+  if (plasmid == "Present") {
+    if (highRisk == "Yes") {
+      pathotype <- "High Risk APEC"
+    }else if (highRisk == "No") {
+      pathotype <- "APEC"
+    }else if (highRisk == "UnknownSTO") {
+      pathotype <- "APEC - unknown whether isolate is high risk (unknown ST and O-type)"
+    }else if (highRisk == "UnknownO") {
+      pathotype <- "APEC - unknown whether isolate is high risk (unknown O-type)"       
+    }else if (highRisk == "UnknownST") {
+      pathotype <- "APEC - unknown whether isolate is high risk (unknown ST)"
+    }
+  }else if (plasmid == "Absent") {
+    if (highRisk == "Yes") {
+      pathotype <- "High Risk non-APEC"
+    }else if (highRisk == "No") {
+      pathotype <- "non-APEC"
+    }else if (highRisk == "UnknownSTO") {
+      pathotype <- "non-APEC - unknown whether isolate is high risk (unknown ST and O-type)"
+    }else if (highRisk == "UnknownO") {
+      pathotype <- "non-APEC - unknown whether isolate is high risk (unknown O-type)"       
+    }else if (highRisk == "UnknownST") {
+      pathotype <- "non-APEC - unknown whether isolate is high risk (unknown ST)"
+    }
   }
 
 # If sample is NOT E. coli...
 }else {
-    serotype <- "NA"
-    Otype <- "NA"
-    plasmid <- "NA"
-    pathotype <- "Not E. coli"
+  serotype <- "NA"
+  Otype <- "NA"
+  ST <- "NA"
+  plasmid <- "NA"
+  pathotype <- "Not E. coli"
 }
 
 #------------------------------------------
