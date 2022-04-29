@@ -87,11 +87,11 @@ if (grepl("Escherichia coli", species, ignore.case = TRUE)) {
     highRisk <- "Yes"
   }else if (Otype == "-" && !is.numeric(ST)) {
     highRisk <- "UnknownSTO"
-  }else if (Otype == "-" && is.numeric(ST) {
+  }else if (Otype == "-" && is.numeric(ST)) {
     highRisk <- "UnknownO"
   }else if (!is.numeric(ST)) {
     highRisk <- "UnknownST"
-  }else if (is.numeric(ST) {
+  }else if (is.numeric(ST)) {
     highRisk <- "No"
   }
   
