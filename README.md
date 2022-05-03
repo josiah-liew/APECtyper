@@ -10,8 +10,9 @@
 
 `APECtyper` is a Bash shell script that classifies Avian Pathogenic *Escherichia coli* (APEC) based on the revised APEC pathotyping scheme developed by [Johnson et al. *in prep*](). Preassembled partial or complete genome assemblies are run through two *E. coli* typing tools (namely, [ECTyper](https://github.com/phac-nml/ecoli_serotyping) and [mlst](https://github.com/tseemann/mlst)) and a report is generated summarizing the results of both programs along with the APEC pathotype classification. `APECtyper` also screens input assemblies for 46 APEC virulence genes compiled in a [custom APEC database](https://github.com/JohnsonSingerLab/APEC_VF_database) and generates a summary report.
 
-<img src=https://github.com/JohnsonSingerLab/APECtyper/blob/main/image/APEC_typing_scheme.png width="1000">
-
+<p align="center">
+<img src=https://github.com/JohnsonSingerLab/APECtyper/blob/main/image/APEC_typing_scheme.png width="750">
+</p>
 
 ## Dependencies
 
