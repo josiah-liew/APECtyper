@@ -99,7 +99,10 @@ Serotype | `O25:H4` | Serotype identified by ECTyper
 SerotypeQC | `PASS (REPORTABLE)` | QC message produced by ECTyper (See [ECTyper page](https://github.com/phac-nml/ecoli_serotyping#quality-control-qc-module) for a description of all possible QC codes) 
 ST | `131` | Sequence type identified by mlst
 APEC_plasmid | `Present` | Whether or not APEC plasmid markers *hlyF* and *ompT* were found
-Pathotype | `High Risk APEC` | Pathotype classification (possible values include `High Risk APEC`, `APEC`, `High Risk non-APEC`, `non-APEC`, or `Not E. coli`)
+Pathotype | `High Risk APEC` | Pathotype classification (possible values include `High Risk APEC`, `APEC`, `High Risk non-APEC`, `non-APEC`, or `Not E. coli`) *
+
+\*NOTE: Occasionally, the ST or O-type cannot be determined. In these situations, there will be an added note in the 'Pathotype' column indicating that it is unknown whether the isolate is 'High Risk'.
+
 
 ### APEC virulence gene output
 
