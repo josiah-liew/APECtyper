@@ -9,7 +9,9 @@
 ## Description
 
 `APECtyper` is a Bash shell script that classifies Avian Pathogenic *Escherichia coli* (APEC) based on the revised APEC pathotyping scheme developed by [Johnson et al. *in prep*](). Preassembled partial or complete genome assemblies are run through two *E. coli* typing tools (namely, [ECTyper](https://github.com/phac-nml/ecoli_serotyping) and [mlst](https://github.com/tseemann/mlst)) and a report is generated summarizing the results of both programs along with the APEC pathotype classification. `APECtyper` also screens input assemblies for 46 APEC virulence genes compiled in a [custom APEC database](https://github.com/JohnsonSingerLab/APEC_VF_database) and generates a summary report.
- 
+
+<img src=https://github.com/JohnsonSingerLab/APECtyper/blob/main/image/APEC_typing_scheme.png width="1000">
+
 
 ## Dependencies
 
@@ -99,7 +101,10 @@ Serotype | `O25:H4` | Serotype identified by ECTyper
 SerotypeQC | `PASS (REPORTABLE)` | QC message produced by ECTyper (See [ECTyper page](https://github.com/phac-nml/ecoli_serotyping#quality-control-qc-module) for a description of all possible QC codes) 
 ST | `131` | Sequence type identified by mlst
 APEC_plasmid | `Present` | Whether or not APEC plasmid markers *hlyF* and *ompT* were found
-Pathotype | `High Risk APEC` | Pathotype classification (possible values include `High Risk APEC`, `APEC`, `High Risk non-APEC`, `non-APEC`, or `Not E. coli`)
+Pathotype | `High Risk APEC` | Pathotype classification (possible values include `High Risk APEC`, `APEC`, `High Risk non-APEC`, `non-APEC`, or `Not E. coli`) *
+
+\*NOTE: Occasionally, the ST or O-type cannot be determined. In these situations, there will be an added note in the 'Pathotype' column indicating that it is unknown whether the isolate is 'High Risk'.
+
 
 ### APEC virulence gene output
 
