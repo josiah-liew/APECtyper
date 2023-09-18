@@ -136,7 +136,7 @@ Coverage | `100` | Percent coverage of the gene ( (AlignmentLength - Gaps) / Gen
 
 If you use APECtyper in your work, please cite:  
 
-* Johnson TJ, Miller EA, Flores-Figueroa C, Munoz-Aguayo J, Cardona C, Fransen K, Lighty M, Gonder E, Nezworski J, Haag A, Behl M, Kromm M, Wileman B, Studniski M, Strain E, McDermott P, Singer RS. Refining the definition of the avian pathogenic *Escherichia coli* (APEC) pathotype through inclusion of high-risk clonal groups.  
+* Johnson TJ, Miller EA, Flores-Figueroa C, Munoz-Aguayo J, Cardona C, Fransen K, Lighty M, Gonder E, Nezworski J, Haag A, Behl M, Kromm M, Wileman B, Studniski M, Strain E, McDermott P, Singer RS. Refining the definition of the avian pathogenic *Escherichia coli* (APEC) pathotype through inclusion of high-risk clonal groups. Poultry Science (2022) 101(10):102009. [doi: 10.1016/j.psj.2022.102009](https://pubmed.ncbi.nlm.nih.gov/35952599/)   
 
 Please also cite:
 
