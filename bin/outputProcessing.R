@@ -22,9 +22,7 @@ species <- ectyper[1, "Species"]
 # Load mlst results tsv file
 
 mlst <- read.table(paste0(out, "/mlst/mlst_results_", name, ".tsv"),
-                 header = FALSE, sep = "\t",
-                 col.names = c("name", "scheme", "ST", "adk", "fumC", 
-                               "gyrB", "icd", "mdh", "purA", "recA")
+                 header = FALSE, sep = "\t"
                  )
 
 #------------------------------------------
@@ -69,7 +67,7 @@ markers <- unique(gsub("\\|.*", "", blastFilterID$Gene))
 if (grepl("Escherichia coli", species, ignore.case = TRUE)) {
   serotype <- ectyper[1, "Serotype"]
   Otype <- ectyper[1, "O.type"]
-  ST <- mlst[, "ST"]
+  ST <- mlst[, 3]
   
   #------------------------------------------
   # Check for presence of APEC plasmid
